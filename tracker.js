@@ -1,117 +1,69 @@
-/* =========================================================
-   GLOBAL USER SESSION
-========================================================= */
-
+/* ============================
+   GLOBAL SESSION STATE
+============================ */
 let USER_NAME = "";
 let USER_EMAIL = "";
 let TEST_SET = "";
 let TEST_START_TIME = null;
 
-/* 🔁 CHANGE THIS TO YOUR APPS SCRIPT URL */
+/* 🔴 PUT YOUR GOOGLE APPS SCRIPT URL HERE */
 const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxXILbHNQIytZKPsxlp6vGOc1KzMI3CZNRzPc9vOzbSHPiYbN1vK63OLmVZ9Qug7SeuCw/exec";
 
-/* =========================================================
-   INITIALIZATION (CALL THIS ON START)
-========================================================= */
-
-function initTracker(testSetName) {
-  TEST_SET = testSetName;
-  TEST_START_TIME = new Date();
-}
-
-/* =========================================================
-   CAPTURE USER INFO (CALL FROM startApp())
-========================================================= */
-
+/* ============================
+   USER CAPTURE
+============================ */
 function captureUserInfo() {
-  USER_NAME = document.getElementById("usernameInput")?.value.trim();
-  USER_EMAIL = document.getElementById("emailInput")?.value.trim();
+  const nameEl = document.getElementById("usernameInput");
+  const emailEl = document.getElementById("emailInput");
 
-  if (!USER_NAME || !USER_EMAIL) {
-    alert("Name and Email are required");
+  if (!nameEl || !emailEl) {
+    alert("Input fields missing");
     return false;
   }
+
+  USER_NAME = nameEl.value.trim();
+  USER_EMAIL = emailEl.value.trim();
+
+  if (!USER_NAME || !USER_EMAIL) {
+    alert("Please enter Name and Email");
+    return false;
+  }
+
   return true;
 }
 
-/* =========================================================
-   CALCULATE TIME TAKEN
-========================================================= */
+/* ============================
+   TRACKER INIT
+============================ */
+function initTracker(setName) {
+  TEST_SET = setName;
+  TEST_START_TIME = new Date();
+}
 
+/* ============================
+   TIME CALC
+============================ */
 function getTimeTaken() {
-  const end = new Date();
-  const diff = Math.floor((end - TEST_START_TIME) / 1000);
+  if (!TEST_START_TIME) return "00:00:00";
 
-  const hrs = String(Math.floor(diff / 3600)).padStart(2, "0");
-  const mins = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
-  const secs = String(diff % 60).padStart(2, "0");
+  const diff = Math.floor((Date.now() - TEST_START_TIME.getTime()) / 1000);
+  const h = String(Math.floor(diff / 3600)).padStart(2, "0");
+  const m = String(Math.floor((diff % 3600) / 60)).padStart(2, "0");
+  const s = String(diff % 60).padStart(2, "0");
 
-  return `${hrs}:${mins}:${secs}`;
+  return `${h}:${m}:${s}`;
 }
 
-/* =========================================================
-   RESULT CALCULATION (AUTO)
-========================================================= */
-/*
-  EXPECTED GLOBALS FROM YOUR EXISTING APP:
-  - questions[]
-  - userAnswers[]  (array of selected indexes)
-*/
-
-function calculateResults() {
-  let correct = 0;
-  let wrong = 0;
-
-  questions.forEach((q, index) => {
-    const userAnswer = userAnswers[index];
-    if (!userAnswer) return;
-
-    if (JSON.stringify(userAnswer.sort()) === JSON.stringify(q.c.sort())) {
-      correct++;
-    } else {
-      wrong++;
-    }
-  });
-
-  const total = questions.length;
-  const score = Math.round((correct / total) * 100);
-
-  return {
-    totalQuestions: total,
-    correct,
-    wrong,
-    score: `${score}%`
-  };
-}
-
-/* =========================================================
-   SEND DATA TO GOOGLE SHEET
-========================================================= */
-
-function sendResultsToGoogleSheet() {
-  const results = calculateResults();
-
-  const payload = {
-    name: USER_NAME,
-    email: USER_EMAIL,
-    testSet: TEST_SET,
-    totalQuestions: results.totalQuestions,
-    correct: results.correct,
-    wrong: results.wrong,
-    score: results.score,
-    timeTaken: getTimeTaken()
-  };
-
+/* ============================
+   GOOGLE SHEET SUBMIT
+============================ */
+function sendResultsToGoogleSheet(payload) {
   fetch(GOOGLE_SHEET_URL, {
     method: "POST",
-    body: JSON.stringify(payload),
-    headers: { "Content-Type": "application/json" }
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
   })
-  .then(res => res.json())
-  .then(() => {
-    console.log("✅ Results stored successfully");
-  })
-  .catch(err => {
-    console.error("❌ Failed to store results", err);
-  });
+    .then(res => res.json())
+    .then(() => console.log("✅ Google Sheet updated"))
+    .catch(err => console.error("❌ Sheet update failed", err));
 }
