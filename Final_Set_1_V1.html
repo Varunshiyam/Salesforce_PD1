@@ -918,31 +918,28 @@ function startApp() {
         }
 
         function loadSet(setNum) {
-            CURRENT_SET_INDEX = setNumber;
+    CURRENT_SET_INDEX = setNum;
+    currentSetIndex = setNum;
 
-            currentQuestionIndex = 0;
-            
-            // UI Toggle
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById(`nav-set${setNum}`).classList.add('active');
-            
-            document.getElementById('quizContainer').style.display = 'block';
-            document.getElementById('certContainer').style.display = 'none';
-            document.getElementById('pageTitle').textContent = `Practice Set ${setNum}`;
-            
-            // Setup Bottom Panel
-            renderBottomNav();
+    currentQuestionIndex = 0;
 
-            // Load First Question
-            renderQuestion();
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.getElementById(`nav-set${setNum}`).classList.add('active');
 
-            // Start Timer
-            if(userProgress[setNum].status === 'pending') {
-                resetTimer();
-            } else {
-                document.getElementById('timerDisplay').textContent = "Completed";
-            }
-        }
+    document.getElementById('quizContainer').style.display = 'block';
+    document.getElementById('certContainer').style.display = 'none';
+    document.getElementById('pageTitle').textContent = `Practice Set ${setNum}`;
+
+    renderBottomNav();
+    renderQuestion();
+
+    if (userProgress[setNum].status === 'pending') {
+        resetTimer();
+    } else {
+        document.getElementById('timerDisplay').textContent = "Completed";
+    }
+}
+
 
         function renderQuestion() {
             const qData = generatedSets[currentSetIndex][currentQuestionIndex];
@@ -1176,34 +1173,32 @@ function startApp() {
         // --- 5. SUBMISSION & CERTIFICATE ---
 
         function submitSet() {
-            if(!confirm("Finish this set? You cannot change answers afterwards.")) return;
-            
-            const progress = userProgress[currentSetIndex];
-            const setQs = generatedSets[currentSetIndex];
-            let correctCount = 0;
+    if (!confirm("Finish this set? You cannot change answers afterwards.")) return;
 
-            setQs.forEach(q => {
-                const ansData = progress.answers[q.id];
-                const userAns = (ansData?.selected || []).sort().toString();
-                const correctAns = [...q.c].sort().toString();
-                if(userAns === correctAns) correctCount++;
-            });
+    const progress = userProgress[currentSetIndex];
+    const setQs = generatedSets[currentSetIndex];
+    let correctCount = 0;
 
-            progress.score = Math.round((correctCount / 80) * 100);
-            progress.status = 'completed';
+    setQs.forEach(q => {
+        const ans = progress.answers[q.id];
+        const userAns = (ans?.selected || []).sort().toString();
+        const correctAns = q.c.slice().sort().toString();
+        if (userAns === correctAns) correctCount++;
+    });
 
-            const statEl = document.getElementById(`status-set${currentSetIndex}`);
-            statEl.textContent = `${progress.score}%`;
-            statEl.classList.add('done');
+    progress.score = Math.round((correctCount / setQs.length) * 100);
+    progress.status = 'completed';
 
-            clearInterval(timerInterval);
-            document.getElementById('timerDisplay').textContent = "Finished";
-            
-            alert(`Set ${currentSetIndex} Completed.\nScore: ${progress.score}%`);
-            renderQuestion(); 
+    const statEl = document.getElementById(`status-set${currentSetIndex}`);
+    statEl.textContent = `${progress.score}%`;
+    statEl.classList.add('done');
 
+    clearInterval(timerInterval);
+    document.getElementById('timerDisplay').textContent = "Finished";
 
+    renderQuestion();
 
+    // ✅ GOOGLE SHEET SUBMISSION (WORKING)
     const result = calculateSetResultForTracker();
 
     sendResultsToGoogleSheet({
@@ -1215,9 +1210,9 @@ function startApp() {
         wrong: result.wrong,
         score: result.score,
         timeTaken: getTimeTaken()
+    });
+}
 
-
-        }
 
         function showCertificate() {
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -1327,27 +1322,31 @@ function startApp() {
             }, 5000);
         }
     function calculateSetResultForTracker() {
-    const setQuestions = sets[CURRENT_SET_INDEX];
+    const setQs = generatedSets[currentSetIndex];
+    const progress = userProgress[currentSetIndex];
+
     let correct = 0;
     let wrong = 0;
 
-    setQuestions.forEach(q => {
-        if (!q.selected || q.selected.length === 0) return;
+    setQs.forEach(q => {
+        const ans = progress.answers[q.id];
+        if (!ans || !ans.selected || ans.selected.length === 0) return;
 
+        const userAns = ans.selected.slice().sort().join(",");
         const correctAns = q.c.slice().sort().join(",");
-        const userAns = q.selected.slice().sort().join(",");
 
-        if (correctAns === userAns) correct++;
+        if (userAns === correctAns) correct++;
         else wrong++;
     });
 
     return {
-        totalQuestions: setQuestions.length,
+        totalQuestions: setQs.length,
         correct,
         wrong,
-        score: Math.round((correct / setQuestions.length) * 100) + "%"
+        score: Math.round((correct / setQs.length) * 100) + "%"
     };
 }
+
 
     </script>
     <script src="tracker.js"></script>
