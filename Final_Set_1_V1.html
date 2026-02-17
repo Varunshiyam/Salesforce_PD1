@@ -1203,6 +1203,9 @@ function startApp() {
             
             alert(`Set ${currentSetIndex} Completed.\nScore: ${progress.score}%`);
             renderQuestion(); 
+
+            sendResultsToGoogleSheet();
+
         }
 
         function showCertificate() {
