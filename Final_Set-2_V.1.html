@@ -1,0 +1,1900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salesforce Certified Platform Developer I - Master Exam</title>
+    <style>
+        :root {
+            --sf-blue: #0176D3;
+            --sf-hover-blue: #005FB2;
+            --sf-bg: #F3F2F2;
+            --sf-white: #FFFFFF;
+            --sf-text-main: #181818;
+            --sf-text-light: #706E6B;
+            --sf-border: #DDDBDA;
+            --sf-success: #027e46;
+            --sf-success-bg: #eaf5ea;
+            --sf-error: #c23934;
+            --sf-error-bg: #fef1f2;
+            --sf-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --nav-width: 280px;
+            --bottom-panel-height: 80px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--sf-bg);
+            color: var(--sf-text-main);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            width: var(--nav-width);
+            background: var(--sf-white);
+            border-right: 1px solid var(--sf-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 20;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--sf-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sf-logo { height: 40px; width: auto; }
+
+        .user-info {
+            padding: 15px 20px;
+            background: #f4f6f9;
+            border-bottom: 1px solid var(--sf-border);
+            font-weight: 600;
+            color: var(--sf-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 10px 0;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            padding: 15px 25px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid transparent;
+            color: var(--sf-text-main);
+        }
+
+        .nav-item:hover { background: #f3f3f3; }
+        .nav-item.active {
+            background: #f0f8fc;
+            border-left-color: var(--sf-blue);
+            color: var(--sf-blue);
+            font-weight: 700;
+        }
+
+        .set-status {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #eee;
+            color: #666;
+        }
+        .set-status.done { background: var(--sf-success); color: white; }
+
+        /* --- MAIN CONTENT --- */
+        .main-layout {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            height: 100%;
+        }
+
+        .top-bar {
+            height: 60px;
+            background: var(--sf-white);
+            border-bottom: 1px solid var(--sf-border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            flex-shrink: 0;
+        }
+
+        .timer-badge {
+            font-variant-numeric: tabular-nums;
+            font-weight: 700;
+            color: var(--sf-blue);
+            background: #eef4ff;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+        }
+
+        .content-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            padding-bottom: 120px; /* Space for bottom panel */
+            background: var(--sf-bg);
+        }
+
+        /* --- QUESTION CARD --- */
+        .question-card {
+            background: var(--sf-white);
+            max-width: 900px;
+            margin: 0 auto;
+            border-radius: 8px;
+            border: 1px solid var(--sf-border);
+            box-shadow: var(--sf-shadow);
+            padding: 40px;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .q-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--sf-border);
+            padding-bottom: 15px;
+        }
+
+        .badge {
+            background: var(--sf-text-light);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .q-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            white-space: pre-wrap;
+        }
+
+        .q-text pre {
+            background: #f3f3f3;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--sf-blue);
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin-top: 10px;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-row {
+            display: flex;
+            padding: 15px;
+            border: 1px solid var(--sf-border);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+            align-items: flex-start;
+        }
+
+        .option-row:hover { border-color: var(--sf-blue); background: #f8fbff; }
+        
+        .option-row.selected {
+            background: #f0f8fc;
+            border-color: var(--sf-blue);
+            box-shadow: inset 3px 0 0 var(--sf-blue);
+        }
+
+        /* Feedback States */
+        .option-row.feedback-correct {
+            background: var(--sf-success-bg);
+            border-color: var(--sf-success);
+            box-shadow: inset 3px 0 0 var(--sf-success);
+            pointer-events: none;
+        }
+
+        .option-row.feedback-wrong {
+            background: var(--sf-error-bg);
+            border-color: var(--sf-error);
+            box-shadow: inset 3px 0 0 var(--sf-error);
+            opacity: 0.8;
+            pointer-events: none;
+        }
+        
+        .option-row.disabled {
+            pointer-events: none;
+            opacity: 0.7;
+            background: #f9f9f9;
+        }
+
+        .option-input {
+            margin-top: 5px;
+            margin-right: 15px;
+            transform: scale(1.3);
+            accent-color: var(--sf-blue);
+        }
+
+        /* Result Message Area */
+        .result-message-area {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+        .result-message-area.success {
+            background: var(--sf-success-bg);
+            border: 1px solid var(--sf-success);
+            color: #044c29;
+        }
+        .result-message-area.error {
+            background: var(--sf-error-bg);
+            border: 1px solid var(--sf-error);
+            color: #c23934;
+        }
+
+        /* --- BOTTOM PANEL --- */
+        .bottom-panel {
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: var(--bottom-panel-height);
+            background: var(--sf-white);
+            border-top: 1px solid var(--sf-border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            z-index: 30;
+            transition: height 0.3s ease;
+        }
+
+        .panel-header {
+            height: 30px;
+            background: #f4f6f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            border-bottom: 1px solid var(--sf-border);
+        }
+
+        .panel-toggle-icon { font-size: 12px; color: var(--sf-text-light); }
+
+        .nav-grid-container {
+            flex: 1;
+            padding: 10px 20px;
+            overflow-x: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn-q {
+            min-width: 36px;
+            height: 36px;
+            border: 1px solid var(--sf-border);
+            background: white;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--sf-text-main);
+        }
+
+        .nav-btn-q:hover { border-color: var(--sf-blue); color: var(--sf-blue); }
+        .nav-btn-q.current { border-color: var(--sf-blue); font-weight: bold; border-width: 2px; }
+        
+        /* State Colors */
+        .nav-btn-q.answered { background: var(--sf-blue); color: white; border-color: var(--sf-blue); }
+        .nav-btn-q.correct { background: var(--sf-success); color: white; border-color: var(--sf-success); }
+        .nav-btn-q.incorrect { background: var(--sf-error); color: white; border-color: var(--sf-error); }
+
+        /* --- START MODAL --- */
+        .modal-backdrop {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); z-index: 100;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .modal-content {
+            background: white; padding: 50px; border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center;
+            border: 1px solid var(--sf-border); width: 450px;
+        }
+        .input-field {
+            width: 100%; padding: 12px; border: 1px solid var(--sf-border);
+            border-radius: 4px; margin: 20px 0; font-size: 1rem;
+        }
+
+        /* --- CERTIFICATE --- */
+        .cert-view {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cert-paper {
+            width: 900px;
+            height: 600px;
+            background: white;
+            position: relative;
+            border: 10px solid #fff;
+            outline: 1px solid #ddd;
+            /* Enhanced Shadow Effect Requested */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45); 
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .cert-header { padding-top: 40px; }
+        .cert-title {
+            color: #00a1e0;
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+        .cert-main-text {
+            font-size: 42px;
+            font-weight: 300;
+            margin: 10px 0 30px 0;
+            color: #222;
+        }
+        .cert-name {
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 36px;
+            font-weight: 700;
+            color: #181818;
+            border-bottom: 2px solid #00a1e0;
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            min-width: 300px;
+        }
+
+        .cert-details {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .score-box {
+            border: 1px solid #eee;
+            padding: 15px 25px;
+            border-radius: 8px;
+            background: #fdfdfd;
+        }
+        .sb-label { font-size: 12px; color: #777; text-transform: uppercase; margin-bottom: 5px; }
+        .sb-val { font-size: 20px; font-weight: 700; color: var(--sf-blue); }
+        .sb-stat { font-size: 14px; font-weight: 600; margin-top: 5px; }
+        .sb-stat.pass { color: var(--sf-success); }
+        .sb-stat.fail { color: var(--sf-error); }
+
+        .cert-footer {
+            margin-top: auto;
+            height: 180px;
+            width: 100%;
+            background-image: url('logo-service-category-logo-background-min.webp'); /* Fallback if local image exists */
+            background-size: cover;
+            background-position: center bottom;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 50px 30px 50px;
+        }
+
+        .trailhead-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .trailhead-icon { width: 50px; height: auto; }
+
+        /* Buttons */
+        .btn {
+            background: var(--sf-blue); color: white; border: none;
+            padding: 10px 24px; border-radius: 4px; font-weight: 600;
+            cursor: pointer; transition: 0.2s;
+        }
+        .btn:hover { background: var(--sf-hover-blue); }
+        
+        .btn-outline { background: white; border: 1px solid var(--sf-border); color: var(--sf-blue); }
+        .btn-outline:hover { background: #f4f6f9; }
+        
+        /* New Evaluate Button */
+        .btn-eval { 
+            background: var(--sf-success); color: white; border: none; 
+            padding: 10px 24px; border-radius: 4px; font-weight: 600; 
+            cursor: pointer; 
+        }
+        .btn-eval:hover { background: #026b3b; }
+        
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* CONFETTI CANVAS */
+        #confettiCanvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <canvas id="confettiCanvas"></canvas>
+
+    <div class="modal-backdrop" id="startModal">
+        <div class="modal-content">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" alt="Salesforce" style="width:120px; margin-bottom:20px;">
+            <h2 style="margin-bottom:5px;">Platform Developer I</h2>
+            <p style="color:#706E6B; margin-bottom:25px;">Master Practice Exam Suite</p>
+            
+            <div style="text-align:left; background:#f4f6f9; padding:15px; border-radius:6px; font-size:0.9rem; margin-bottom:20px;">
+                <strong>Exam Configuration:</strong>
+                <ul style="margin:5px 0 0 20px; padding:0;">
+                    <li>3 Randomized Sets</li>
+                    <li>80 Questions per Set</li>
+                    <li>120 Minutes per Set</li>
+                    <li>Passing Score: 65%</li>
+                </ul>
+            </div>
+
+            <input type="text" id="usernameInput" class="input-field" placeholder="Enter Your Full Name">
+            <button class="btn" style="width:100%;" onclick="startApp()">Start Assessment</button>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" class="sf-logo">
+        </div>
+        <div class="user-info">
+            <span style="font-size:1.2em">👤</span> <span id="displayUsername">Candidate</span>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-item active" id="nav-set1" onclick="loadSet(1)">
+                <span>Practice Set 1</span>
+                <span class="set-status" id="status-set1">Start</span>
+            </div>
+            <div class="nav-item" id="nav-set2" onclick="loadSet(2)">
+                <span>Practice Set 2</span>
+                <span class="set-status" id="status-set2">Start</span>
+            </div>
+            <div class="nav-item" id="nav-set3" onclick="loadSet(3)">
+                <span>Practice Set 3</span>
+                <span class="set-status" id="status-set3">Start</span>
+            </div>
+            <div class="nav-item" id="nav-cert" onclick="showCertificate()" style="margin-top:20px; border-top:1px solid #eee;">
+                <span>🎓 Certificate</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-layout">
+        <div class="top-bar">
+            <h2 id="pageTitle" style="font-size:1.1rem; margin:0;">Practice Set 1</h2>
+            <div class="timer-badge" id="timerDisplay">00:00</div>
+        </div>
+
+        <div class="content-scroll-area" id="mainArea">
+            
+            <div id="quizContainer">
+                <div class="question-card">
+                    <div class="q-meta">
+                        <span class="badge" style="background:#706E6B;" id="qIndexBadge">Question 1 of 80</span>
+                        <span class="badge" style="background:var(--sf-blue);" id="qTypeBadge">Single Choice</span>
+                    </div>
+                    <div class="q-text" id="qText">Loading...</div>
+                    <div class="options-container" id="optionsContainer">
+                        </div>
+                    
+                    <div id="resultMessage" class="result-message-area">
+                        <strong id="resultTitle"></strong> <span id="resultDesc"></span>
+                        <div style="margin-top:10px; font-size:0.9rem;" id="correctAnswerDisplay"></div>
+                    </div>
+
+                    <div style="display:flex; justify-content:space-between; margin-top:30px; padding-top:20px; border-top:1px solid #eee;">
+                        <button class="btn btn-outline" id="prevBtn" onclick="navigate(-1)">Previous</button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-eval" id="evaluateBtn" onclick="evaluateQuestion()">Evaluate</button>
+                            <button class="btn btn-outline" id="nextBtn" onclick="navigate(1)">Next</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align:center; margin-top:30px;">
+                    <button class="btn" id="submitBtn" onclick="submitSet()" style="background:#333;">Submit Full Set</button>
+                </div>
+            </div>
+
+            <div class="cert-view" id="certContainer">
+                <div class="cert-paper">
+                    <div class="cert-header">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f9/Salesforce.com_logo.svg" style="width:80px; margin-bottom:15px;">
+                        <div class="cert-title">Certified</div>
+                        <div class="cert-main-text">Platform Developer I</div>
+                    </div>
+                    
+                    <div style="font-size:12px; text-transform:uppercase; letter-spacing:2px; color:#999; margin-bottom:5px;">Presented To</div>
+                    <div class="cert-name" id="certName">User Name</div>
+                    <div style="color:#666; margin-bottom:20px; font-size:14px;">For successfully completing the Master Practice Suite</div>
+
+                    <div class="cert-details">
+                        <div class="score-box">
+                            <div class="sb-label">Set 1</div>
+                            <div class="sb-val" id="cert-score-1">--</div>
+                            <div class="sb-stat" id="cert-stat-1">Pending</div>
+                        </div>
+                        <div class="score-box">
+                            <div class="sb-label">Set 2</div>
+                            <div class="sb-val" id="cert-score-2">--</div>
+                            <div class="sb-stat" id="cert-stat-2">Pending</div>
+                        </div>
+                        <div class="score-box">
+                            <div class="sb-label">Set 3</div>
+                            <div class="sb-val" id="cert-score-3">--</div>
+                            <div class="sb-stat" id="cert-stat-3">Pending</div>
+                        </div>
+                    </div>
+
+                    <div class="cert-footer">
+                        <div class="trailhead-logo-container">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMUAAACUCAMAAAAUNB2QAAABC1BMVEX///8dMV+N0fMAmUmodrIAnUgVTllyK4YcL16P1PYAm0mT2ft2K4geLGAScDogNWJqd5QXKVmdproQdjwMgkAGjUWCwuVzrNEPYlQeJWAJJVgsRnHy8/averfk5ux7t9sAHlU7W4RroMRda4wbNV4AFlLa3OGBiZ/KzthDZ5BklrtXhKrAxdBKcJgmPms0UXuSa6RJRXd+YJgwOWg5L2qSWaDc8ucVUlhGrXEaPV1EVHqQlqm0ucdQXX52f5g8Sm8AAEoADVFmVIlYQ31zN4lfLH2cZqhLLnSGSZYwV2pCX3gXSFqg1rRwwY3K6tmNyqYopWCu3MMNfE0Qb0oTaE8VWldapX5qkY1lfIsDNKQkAAAHsklEQVR4nO2baXPiRhCGVxjMSF5ZSAZMhAwy2NyHr2Bz2GSdvRKvj/WR5P//ksx0j8QIG7xHqkZU5v2QFHjY6od+e7pngDdvlJSUlJSUlJSUlJSUlJT+p/JkB/Dz8hpOfTwpyQ7jp+R16ufEdYsXTk12KD8syjCybU3TiN2rOiuajwZnYCJuMeOsYIGUxudawAAcdvGiITuo79WkanEG27UJ5xiNV8pWpfqUh25rzVa7GDywqh3ZoX27Ouc8ETbpbucT+XKLcxB7Ol6R6vDGU2QgWpMy6AmqcrvHuazMSmy6pQwGTOx+hTMAR5dgOshoBVzVOMdobastMDBt99FWdtGRHeRrahR5Ife3E/PKtzUOeBHv4phgGRPSzT+DoKr00WwkE2cMh3vfar/EwKqjCSuInZEd6mI5Ljf+tr6AIpFoW7gmthiOjwH2y4shEjovDrcqO9yX1eCZ2M0vgUgkNraLMOfGE6Oxj45/BQIwANe/kB3yc5UwE+RViBnGfuz6hkfAJt8CMcP4LW6jetX91kyIGO/iNak7+wDRX7LFRjHaPQJ7cpy6XwMhipUNMdRKt11ejGFBhddlhz6TB3un1mtFIFrEdhcnR2/CvPUuPgNu3YeIutERlnnG7i4qFD3fh51Zi4unGj4WRSTgfNdeOlEldMDU3JiMIh5EQ+aGp5ar8Vp5pTTexWO7dSAVVjtSFPhGs22ouXiq2gXOnmwAJg+b9m4kvnIzvIsiyzwF+1QcWvgFWMcS/aTn2whhzXlKj6ZlowtedOUXeA1LuxvtFHCIsA4vuafCFJUjR0A9Dy3cld80MrAVFSP7U3kXUnF4cHAIGG3+10qz3430wY0Wnm9lJ6PkQhhiaQd+OjzYSR4dA2MLy6BvE7cZPZBDMmzZyajzVDz30/HRTjKZvLTg4EQzoNMzt5gYJG6x2wbZrc9jx89oKhJlaMraZZLp4BA8w1o4nriJVhGJE2wxseVuUw68lT0hFTo2beonoOCe6rUSlfCmSiwNmgz295FUiim8vZFUQMFyPyVnnmrv8jY4N1vlIUO2zKGwgW1BjIqffy6TgdBTWs8K2qBGWuI2hfOWzGkqA6nYFVKRb0b8RLUDnkIdH2MfFDyll2GX68mrb5wDXbFtt+f8BJ4KKS55AxG3Wx2TN5FG0YFUWKKfcL79PSmKewo6CCZGnK106C5E3u0UGMoWho88Nu2T97+KFIGnrCOWGNyzZjfqet6Xa6nivKGwaZsf3r7/+JyCYMWjp3ZnnkJLWbIsVcM2JvgJn/iUTqc/RxylCRV/cIyz1WyXYuxEk3VT6FjRHQpP0tpJmknwFFa3eRQ8PI62cH0bdqmpJIoqzkWhobqBnxhFWBpBVXwKXQapEWcv3Gsl3bBB4/bDA2kFPyf6lEZ9/hjx04nwDHqqG1oKZilJhVHDXTWAyPcEP6XD0jjgfvogFAuv9qCF65hEOeP5BPtwUBZN0U9haYR+ihQLesrintIrrryOMYYxL7hKa3E/zSDSrBAORIh0WBqYjODGATuGnPLOsLOFW9kA5fFzrpO3omghoJ9OPgTPJHdAwXaLL97AcpdS3iOI2+LiQ0Ywfs9rwfP8xbCiJ+WrFVP+hSHQguBfExFebck48HnFHw19gaRQNHr/NYWMrRbbReCJnxT7hzQZ5z3IBRmuL9MfVdSfS1etr18RWRQwC5qF1DJ9waWD66WrUqnsL5IpjLWFMs5uAojFi0CpGFHk5imuB7DydgkpXxkbitzWZi4arnELC2/uXoOIEcXW5ubWWgTDuIaFg+u1+WTksjGlyG5uzmMEjhpcn0VjpmmLYsSFAiA2t6LB3X3lawe3AocBiyMrpVOkECPLxUojF2SEFwZwXM9iRmIBw5C8R5H1LIZsoNiD3Cwjd19ewMhtoWYMuXtTKoVmDh+yRqR4c6Kxzr6G60OMHBdnMHL3T6a0CWSCRwpint5nUzMOWrkUI2wdd7c3A/6CL8F7H+SNMzwSE6ZBKffmXgY/6NZMxsGjQgiGEXAZlAMvL2+iOxX3UmFo8k9nplIuQWp1/g14zbROH2h9GHNVzpXi1TG4jnYTw8jOGAipSrri9CZV/pMdOlufPt7nUi+PGsbZYJ7CMFJr9w+newGDOx3L+ylAzRn5PA7TvHp6uF9LGc9J+IYbUjD30TRcaZxBc6263K9JdcY9N7g4MLX1wsN9zkgZEZRgtIW6oH+ixfBQOA2sRBnszET2x/ZvOvWeH3AQc+/q6ZGSsJyEKLz33a6lUnRLenh8uhqaEYY4fAfS61BfhT9pIyYZXj0VKApjYQqmqb+27h8LT+tDuiJAIK59EQsGJq/hVG03vEygJKY2vFp/eioUHh8f/55MJs54/M/p1XBPINCI7Y/GnbgwMHm1Tn207wq3IoSxmGRvb69HZbmuG7m2oghWZtKQXg/zKtUmF9P94Md5AsyzSzfCEM6dRpzSIKhEM3Ju+ZRk4VUVsW3fn9Is1GKXBkFerTapV3u+786x0ATYrrtvjTJOo1aKMwKXV6rVOuOL6qio7VP5vk//S4qjzJgBrAJBKM8rlShNrdaYOB32f/rQWyWAea1y7EpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkpKSkrfq38B6vfrBg37okEAAAAASUVORK5CYII=" class="trailhead-icon">
+                            <div style="font-size:10px; font-weight:bold; letter-spacing:1px; margin-top:5px; color:white; text-shadow:0 1px 2px rgba(0,0,0,0.5);">TRAILHEAD</div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:600; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.3); font-size:14px;" id="certDate">Date: --</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-outline" style="margin-top:20px;" onclick="window.print()">Print / Save PDF</button>
+            </div>
+
+        </div>
+
+        <div class="bottom-panel" id="bottomPanel">
+            <div class="panel-header" onclick="toggleBottomPanel()">
+                <div style="font-size:12px; color:#555; display:flex; align-items:center; gap:5px;">
+                    <span id="panelIcon">▼</span> Question Navigator
+                </div>
+            </div>
+            <div class="nav-grid-container" id="navGrid">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. DATA SOURCE (Merged and Deduplicated Logic) ---
+        // 240 questions Logic. Populated with representative samples. 
+        // In a full implementation, you would paste the text for all 240 questions here.
+        // For this demo, I will use the ~80 unique items provided and replicate to ensure the app functions with 240 slots.
+        
+const rawMasterPool = [
+    // --- SET 1 (60 Questions) - Salesforce Platform Developer I ---
+    
+    // Question 1
+    { t: "What should be used to create scratch orgs?", o: ["Workbench", "Salesforce CLI", "Developer Console", "Sandbox refresh"], c: [1] },
+    
+    // Question 2
+    { t: "What are three considerations when using the InvocableMethod annotation in Apex?", o: ["Only one method using the InvocableMethod annotation can be defined per Apex class.", "A method using the InvocableMethod annotation must be declared as static.", "A method using the InvocableMethod annotation can be declared as Public or Global.", "A method using the InvocableMethod annotation can have multiple input parameters.", "A method using the InvocableMethod annotation must define a return value."], c: [0,1,2] },
+    
+    // Question 3
+    { t: "Universal Containers has implemented an order management application. Each Order can have one or more Order Line items. The Order Line object is related to the Order via a master-detail relationship. For each Order Line item, the total price is calculated by multiplying the Order Line item price with the quantity ordered. What is the best practice to get the sum of all Order Line item totals on the Order record?", o: ["Roll-up summary field", "Formula field.", "Quick action", "Apex trigger"], c: [0] },
+    
+    // Question 4
+    { t: "Which two are best practices when it comes to Aura component and application event handling?", o: ["Reuse the event logic in a component bundle, by putting the logic in the helper.", "Handle low-level events in the event handler and re-fire them as higher-level events.", "Try to use application events as opposed to component events.", "Use component events to communicate actions that should be handled at the application level."], c: [0,1] },
+    
+    // Question 5
+    { t: "A team of developers is working on a source-driven project that allows them to work independently, with many different org configurations. Which type of Salesforce orgs should they use for their development?", o: ["Developer sandboxes", "Developer orgs", "Scratch orgs", "Full Copy sandboxes"], c: [2] },
+    
+    // Question 6
+    { t: "Which three data types can a SOQL query return?", o: ["sObject", "Double", "Long", "List", "Integer"], c: [0,3,4] },
+    
+    // Question 7
+    { t: "Which three resources in an Aura component can contain JavaScript functions?", o: ["Style", "Helper", "Renderer", "Design", "Controller"], c: [1,2,4] },
+    
+    // Question 8
+    { t: "A developer wants to import 500 Opportunity records into a sandbox. Why should the developer choose to use Data Loader instead of Data Import Wizard?", o: ["Data Import Wizard does not support Opportunities.", "Data Loader automatically relates Opportunities to Accounts.", "Data Loader runs from the developers browser.", "Data Import Wizard can not import all 500 records."], c: [0] },
+    
+    // Question 9
+    { t: "An org has an existing flow that edits an Opportunity with an Update Records element. A developer must update the flow to also create a Contact and store the created Contacts ID on the Opportunity. Which update must the developer make in the flow?", o: ["Add a new Update Records element.", "Add a new Create Records element.", "Add a new Get Records element.", "Add a new Roll Back Records element."], c: [1] },
+    
+    // Question 10
+    { t: "Which Lightning Web Component custom event property settings enable the event to bubble up the containment hierarchy and cross the Shadow DOM boundary?", o: ["bubbles: true, composed: true", "bubbles: true, composed: false", "bubbles: false, composed: false", "bubbles: false, composed: true"], c: [0] },
+    
+    // Question 11
+    { t: "The Account object in an organization has a master-detail relationship to a child object called Branch. The following automations exist: Roll-up summary fields, Custom validation rules, Duplicate rules. A developer created a trigger on the Account object. Which two things should the developer consider while testing the trigger code?", o: ["The validation rules will cause the trigger to fire again.", "Rollup summary fields can cause the parent record to go through Save.", "The trigger may fire multiple times during a transaction.", "Duplicate rules are executed once all DML operations commit to the database."], c: [1,2] },
+    
+    // Question 12
+    { t: "Universal Containers wants Opportunities to no longer be editable when reaching the Closed/Won stage. How should a developer accomplish this?", o: ["Use the Process Automation settings.", "Use Flow Builder.", "Mark fields as read-only on the page layout.", "Use a validation rule."], c: [3] },
+    
+    // Question 13
+    { t: "A lead developer creates a virtual class called OrderRequest. How can a developer use the OrderRequest class within the CustomerOrder class?", o: ["public class CustomerOrder implements OrderRequest", "public class CustomerOrder extends OrderRequest", "Extends class-OrderRequest public class CustomerOrder", "Implements classOrderRequest public class CustomerOrder"], c: [1] },
+    
+    // Question 14
+    { t: "A developer wants to improve runtime performance of Apex calls by caching results on the client. What is the most efficient way to implement this and follow best practices?", o: ["Call the setStorable method on the action in the JavaScript client-side code.", "Decorate the server-side method with @AuraEnabled(cacheable=true).", "Decorate the server side method with @auraEnabled(storable=true).", "Set a cookie in the browser for use upon return to the page."], c: [1] },
+    
+    // Question 15
+    { t: "A developer needs to make a custom Lightning Web Component available in the Salesforce Classic user interface. Which approach can be used to accomplish this?", o: ["Wrap the Lightning Web Component in an Aura Component and surface the Aura Component as a Visualforce tab.", "Embed the Lightning Web Component is a Visualforce Component and add directly to the page layout.", "Use a Visualforce page with a custom controller to invoke the Lightning Web Component using a call to an Apex method.", "Use the Lightning Out JavaScript library to embed the Lightning Web Component in a Visualforce page and add to the page layout."], c: [3] },
+    
+    // Question 16
+    { t: "What can be used to override the Accounts standard Edit button for Lightning Experience?", o: ["Lightning flow", "Lightning action", "Lightning component", "Lightning page"], c: [2] },
+    
+    // Question 17
+    { t: "For which three items can a trace flag be configured?", o: ["Visualforce", "Flow", "User", "Apex Class", "Apex Trigger"], c: [3,2,4] },
+    
+    // Question 18
+    { t: "A developer completed modifications to a customized feature that is comprised of two elements: Apex trigger, Trigger handler Apex class. What are two factors that the developer must take into account to properly deploy the modification to the production environment?", o: ["All methods in the test classes must use @isTest.", "At least one line of code must be executed for the Apex trigger.", "Test methods must be declared with the testMethod keyword.", "Apex classes must have at least 75% code coverage org-wide."], c: [1,3] },
+    
+    // Question 19
+    { t: "What are two benefits of using External IDs?", o: ["An External ID field can be used to reference an ID from another external system.", "An External ID can be a formula field to help create a unique key from two fields in Salesforce.", "An External ID can be used with Salesforce Mobile to make external data visible.", "An External ID is indexed and can improve the performance of SOQL queries."], c: [0,3] },
+    
+    // Question 20
+    { t: "A developer creates a batch Apex job to update a large number of records and receives reports of the job timing out and not completing. What is the first step towards troubleshooting the issue?", o: ["Check the asynchronous job monitoring page to view the job status and logs.", "Check the debug logs for the batch job.", "Disable the batch job and recreate it with a smaller number of records.", "Decrease the batch size to reduce the load on the system."], c: [0] },
+    
+    // Question 21
+    { t: "A developer is migrating a Visualforce page into a Lightning web component. The Visualforce page shows information about a single record. The developer decides to use Lightning Data Service to access record data. Which security consideration should the developer be aware of?", o: ["The isAccessible method must be used for field-level access checks.", "Lightning Data Service handles sharing rules and field-level security.", "The with sharing keyword must be used to enforce sharing rules.", "Lightning Data Service ignores field-level security."], c: [1] },
+    
+    // Question 22
+    { t: "A Next Best Action strategy uses an Enhance element that invokes an Apex method to determine a discount level for a Contact, based on a number of factors. What is the correct definition of the Apex method?", o: ["@InvocableMethod global static List<Recommendation> getLevel(List<ContactWrapper> input) {}", "@InvocableMethod global List<List<Recommendation>> getLevel(List<ContactWrapper> input) {}", "@InvocableMethod global Recommendation getLevel(ContactWrapper input) {}", "@InvocableMethod global static List<List<Recommendation>> getLevel(List<ContactWrapper> input) {}"], c: [3] },
+    
+    // Question 23
+    { t: "Which two statements are true about using the @testSetup annotation in an Apex test class?", o: ["In a test setup method, test data is inserted once and made available for all test methods in the test class.", "Records created in the test setup method cannot be updated in individual test methods.", "A method defined with the @testSetup annotation executes once for each test method in the test class and counts towards system limits.", "The @testSetup annotation is not supported when the @isTest(SeeAllData=true) annotation is used."], c: [0,3] },
+    
+    // Question 24
+    { t: "Which three code lines are required to create a Lightning component on a Visualforce page?", o: ["$Lightning.createComponent", "$Lightning.use", "Lightning.useComponent", "apex:includeLightning"], c: [0,1,3] },
+    
+    // Question 25
+    { t: "When importing and exporting data into Salesforce, which two statements are true?", o: ["Bulk API can be used to import large data volumes in development environments without bypassing the storage limits.", "Data import wizard is an application that is installed on your computer.", "Bulk API can be used to bypass the storage limits when importing large data volumes in development environments.", "Developer and Developer Pro sandboxes have different storage limits."], c: [0,3] },
+    
+    // Question 26
+    { t: "Universal Containers (UC) uses out-of-the-box order management, that has a Master-Detail relationship between Order and Order Line Item. UC stores the availability date on each Order Line Item and Orders are only shipped when all of the Order Line Items are available. Which method should be used to calculate the estimated ship date for an Order?", o: ["Use a LATEST formula on each of the latest availability date fields.", "Use a DAYS formula on each of the availability date fields and a COUNT Roll Up Summary field on the Order.", "Use a MAX Roll-Up Summary field on the latest availability date fields.", "Use a CEILING formula on each of the latest availability date fields."], c: [2] },
+    
+    // Question 27
+    { t: "A developer writes a trigger on the Account object on the before update event that increments a count field. A record triggered flow also increments the count field every time that an Account is created or updated. What is the value of the count field if an Account is inserted with an initial value of zero, assuming no other automation logic is implemented on the Account?", o: ["2", "3", "4", "0", "1"], c: [4] },
+    
+    // Question 28
+    { t: "A developer creates a Lightning web component that imports a method within an Apex class. When a Validate button is pressed, the method runs to execute complex validations. In this implementation scenario, which two options are part of the Controller according to the MVC architecture?", o: ["JavaScript file", "XML file", "Apex class", "HTML file"], c: [0,2] },
+    
+    // Question 29
+    { t: "A developer must write an Apex method that will be called from a Lightning component. The method may delete an Account stored in the accountRec variable. Which method should a developer use to ensure only users that should be able to delete Accounts can successfully perform deletions?", o: ["accountRec.isDeletable()", "Schema.sObjectType.Account.isDeletable()", "Account.isDeletable()", "accountRec.ObjectType.isDeletable()"], c: [1] },
+    
+    // Question 30
+    { t: "A developer deployed a trigger to update the Status__c of Assets related to an Account when the Account's status changes and a nightly integration that updates Accounts in bulk has started to fail with limit failures. What should the developer change about the code to address the failure while still having the code update all of the Assets correctly?", o: ["Add a LIMIT clause to the SOQL query on line 16 to limit the number of Assets queried for an Account.", "Change the getAssetsToUpdate method to process all Accounts in one call and call it outside of the for loop that starts on line 03.", "Add List<Asset> assets = [SELECT Id, Status__c FROM Asset WHERE AccountId = :acctId] to line 14 and iterate over the assets list in the for loop on line 15.", "Move all of the logic to a Queueable class that queries for and updates the Assets and call it from the trigger."], c: [1] },
+    
+    // Question 31
+    { t: "A developer must implement a CheckPaymentProcessor class that provides check processing payment capabilities that adhere to what is defined for payments in the PaymentProcessor interface.", o: ["public class CheckPaymentProcessor implements PaymentProcessor { public void pay(Decimal amount) { // functional code here } }", "public class CheckPaymentProcessor extends PaymentProcessor { public void pay(Decimal amount) { // functional code here } }"], c: [0] },
+    
+    // Question 32
+    { t: "The JobApplication__c custom object has a field that is a master-detail relationship to the Contact object, where the Contact object is the master. As part of a feature implementation, a developer needs to retrieve a list containing Contact records where the related Account Industry is Technology, while also retrieving the Contacts JobApplication__c records. What is the most efficient statement to retrieve the list of Contacts?", o: ["SELECT Id, (SELECT Id FROM JobApplication__c) FROM Contact WHERE Account.Industry = 'Technology'", "SELECT Id, (SELECT Id FROM JobApplications__c) FROM Contact WHERE Account.Industry = 'Technology'", "SELECT Id, (SELECT Id FROM JobApplication__r) FROM Contact WHERE Account.Industry = 'Technology'", "SELECT Id, (SELECT Id FROM JobApplication__c) FROM Contact WHERE Account.Industry__c = 'Technology'"], c: [2] },
+    
+    // Question 33
+    { t: "How many Accounts will be inserted by the following block of code? for(Integer i = 0; i < 500; i++) { Account a = new Account(Name='New Account ' + i); insert a; }", o: ["0", "100", "500", "150"], c: [0] },
+    
+    // Question 34
+    { t: "A development team wants to use a deployment script to automatically deploy to a sandbox during the development cycles. Which two tools can they use to run a script that deploys to a sandbox?", o: ["Developer Console", "Ant Migration Tool", "SFDX CLI", "Change Sets"], c: [1,2] },
+    
+    // Question 35
+    { t: "Considering the following code snippet: public static void insertAccounts(List<Account> theseAccounts) { for(Account thisAccount : theseAccounts) { if(thisAccount.website == null) thisAccount.website = 'https://www.demo.com'; } update theseAccounts; } When the code executes, a DML exception is thrown. How should a developer modify the code to ensure exceptions are handled gracefully?", o: ["Implement the upsert DML statement.", "Remove null items from the list of Accounts.", "Implement Change Data Capture.", "Implement a try-catch block for the DML."], c: [3] },
+    
+    // Question 36
+    { t: "A PrimaryId__c custom field exists on the Candidate__c custom object. The field is used to store each candidate's id number and is marked as Unique in the schema definition. As part of a data enrichment process, Universal Containers has a CSV file that contains updated data for all candidates in the system. Which technique should the developer implement to streamline the data upload?", o: ["Upload the CSV into a custom object related to Candidate__c.", "Create a before save flow to correctly map the records.", "Create a before insert trigger to correctly map the records.", "Update the PrimaryId__c field definition to mark it as an External Id."], c: [3] },
+    
+    // Question 37
+    { t: "Considering the following snippet of code: Boolean isOK; Integer x; String theString = 'Hello'; if(isOK == false) { theString = 'Hello'; x = 1; } else if(isOK == true) { theString = 'Hello'; x = 2; } else if(isOK != null) { theString = 'Hello'; x = 3; } else { x = 4; } Based on this code, what is the value of x?", o: ["4", "3", "2", "1"], c: [0] },
+    
+    // Question 38
+    { t: "What should a developer use to script the deployment and unit test execution as part of continuous integration?", o: ["Salesforce CLI", "Developer Console", "Execute Anonymous", "VS Code"], c: [0] },
+    
+    // Question 39
+    { t: "A developer must provide custom user interfaces when users edit a Contact in either Salesforce Classic or Lightning Experience. What should the developer use to override the Contacts Edit button and provide this functionality?", o: ["A Visualforce page in Salesforce Classic and a Lightning page in Lightning Experience", "A Lightning page in Salesforce Classic and a Visualforce page in Lightning Experience", "A Lightning component in Salesforce Classic and a Lightning component in Lightning Experience", "A Visualforce page in Salesforce Classic and a Lightning component in Lightning Experience"], c: [3] },
+    
+    // Question 40
+    { t: "Universal Containers (UC) is developing a process for their sales teams that requires all sales reps to go through a set of scripted steps with each new customer they create. In the first step of collecting information, UC's ERP system must be checked via a REST endpoint to see if the customer exists. If the customer exists, the data must be presented to the sales rep in Salesforce. Which two should a developer implement to satisfy the requirements?", o: ["Trigger", "Invocable method", "Future method", "Flow"], c: [1,3] },
+    
+    // Question 41
+    { t: "A developer wrote Apex code that calls out to an external system using REST API. How should a developer write the test to prove the code is working as intended?", o: ["Write a class that implements WebServiceMock.", "Write a class that extends WebServiceMock.", "Write a class that extends HTTPCalloutMock.", "Write a class that implements HTTPCalloutMock."], c: [3] },
+    
+    // Question 42
+    { t: "A lead developer creates an Apex interface called Laptop. How can a developer use the Laptop interface within the SilverLaptop class?", o: ["public class SilverLaptop extends classLaptop", "public class SilverLaptop interface classLaptop", "public class SilverLaptop implements Laptop", "public class SilverLaptop extends Laptop"], c: [2] },
+    
+    // Question 43
+    { t: "A developer created a custom order management app that uses an Apex class. The order is represented by an Order object and an OrderItem object that has master-detail relationship to Order. During order processing, an order may be split into multiple orders. What should a developer do to allow their code to move some existing OrderItem records to a new Order record?", o: ["Add without sharing to the Apex class declaration.", "Select the Allow reparenting option on the master-detail relationship.", "Change the master detail relationship to an external lookup relationship.", "Create a junction object between OrderItem and Order."], c: [1] },
+    
+    // Question 44
+    { t: "How does the Lightning Component framework help developers implement solutions faster?", o: ["By providing device-awareness for mobile and desktops", "By providing an Agile process with default steps", "By providing change history and version control", "By providing code review standards and processes"], c: [0] },
+    
+    // Question 45
+    { t: "A developer wants to mark each Account in a List<Account> as either Active or Inactive, based on the value in the LastModifiedDate field of each Account being greater than 90 days in the past. Which Apex technique should the developer use?", o: ["A switch statement, with a for loop inside", "An if-else statement, with a for loop inside", "A for loop, with a switch statement inside", "A for loop, with an if or if-else statement inside"], c: [3] },
+    
+    // Question 46
+    { t: "Universal Containers wants to assess the advantages of declarative development versus programmatic customization for specific use cases in its Salesforce implementation. What are two characteristics of declarative development over programmatic customization?", o: ["Declarative development does not require Apex test classes.", "Declarative development can be done using the Setup menu.", "Declarative code logic does not require maintenance or review.", "Declarative development has higher design limits and query limits."], c: [0,1] },
+    
+    // Question 47
+    { t: "An Opportunity needs to have an amount rolled up from a custom object that is not in a master-detail relationship. How can this be achieved?", o: ["Write a trigger on the child object and use an aggregate function to sum the amount for all related child objects under the Opportunity.", "Use the Metadata API to create real-time roll-up summaries.", "Write a trigger on the Opportunity object and use an aggregate function to sum the amount for all related child objects under the Opportunity.", "Use the Streaming API to create real-time roll-up summaries."], c: [0] },
+    
+    // Question 48
+    { t: "While writing an Apex class, a developer wants to make sure that all functionality being developed is handled as specified by the requirements. Which approach should the developer use to be sure that the Apex class is working according to specifications?", o: ["Create a test class to execute the business logic and run the test in the Developer Console.", "Run the code in an Execute Anonymous block in the Developer Console.", "Include a try-catch block to the Apex class.", "Include a savepoint and Database.rollback."], c: [0] },
+    
+    // Question 49
+    { t: "What can be easily developed using the Lightning Component framework?", o: ["Salesforce Classic user interface pages", "Salesforce integrations", "Lightning Pages", "Customized JavaScript buttons"], c: [2] },
+    
+    // Question 50
+    { t: "A developer must create a Lightning component that allows users to input Contact record information to create a Contact record, including a Salary__c custom field. What should the developer use, along with a lightning-record-edit-form, so that Salary__c field functions as a currency input and is only viewable and editable by users that have the correct field level permissions on Salary__c?", o: ["<lightning-input type=\"number\" value=\"{Salary__c}\" formatter=\"currency\"></lightning-input>", "<lightning-input-currency value=\"{Salary__c}\"></lightning-input-currency>", "<lightning-input-currency><lightning-input-field field-name=\"Salary__c\"></lightning-input-field></lightning-input-currency>", "<lightning-formatted-number value=\"{Salary__c}\" format-style=\"currency\"></lightning-formatted-number>"], c: [2] },
+    
+    // Question 51
+    { t: "Which statement generates a list of Leads and Contacts that have a field with the phrase 'ACME'?", o: ["List<List<sObject>> searchList = [SELECT Name, Id FROM Contact, Lead WHERE Name LIKE '%ACME%'];", "List<sObject> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact, Lead(Id);", "Map<sObject, List<sObject>> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact(Id), Lead(Id);", "List<List<sObject>> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact(Id), Lead;"], c: [3] },
+    
+    // Question 52
+    { t: "A developer needs to create a baseline set of data Accounts, Contacts, Products, Assets for an entire suite of tests allowing them to test independent requirements for various types of Salesforce Cases. Which approach can efficiently generate the required data for each unit test?", o: ["Create test data before Test.startTest() in the unit test.", "Use @testSetup with a void method.", "Add @isTest(SeeAllData=true) at the start of the unit test class.", "Create a mock using the Stub API."], c: [1] },
+    
+    // Question 53
+    { t: "When using Salesforce DX, what does a developer need to enable to create and manage scratch orgs?", o: ["Environment Hub", "Dev Hub", "Sandbox", "Production"], c: [1] },
+    
+    // Question 54
+    { t: "What is the result of the following code snippet? public void doWork() { Account acct; for(Integer i = 0; i < 200; i++) { insert acct; } }", o: ["0 Accounts are inserted.", "1 Account is inserted.", "200 Accounts are inserted.", "201 Accounts are inserted."], c: [0] },
+    
+    // Question 55
+    { t: "A developer at AW Computing is tasked to create the supporting test class for a programmatic customization that leverages records stored within the custom object, PricingStructure__c. AW Computing has a complex pricing structure for each item on the store, spanning more than 500 records. Which two approaches can the developer use to ensure PricingStructure__c records are available when the test class is executed?", o: ["Use the Test.loadData method.", "Use without sharing on the class declaration.", "Use the @isTest(SeeAllData=true) annotation.", "Use a Test Data Factory class."], c: [0,3] },
+    
+    // Question 56
+    { t: "What is the result of the following code? Account a = new Account(); Database.insert(a, false);", o: ["The record will be created and no error will be reported.", "The record will not be created and an exception will be thrown.", "The record will not be created and no error will be reported.", "The record will be created and a message will be in the debug log."], c: [2] },
+    
+    // Question 57
+    { t: "When a user edits the Postal Code on an Account, a custom Account text field named Timezone must be updated based on the values in another custom object called PostalCodeToTimezone__c. What is the optimal way to implement this feature?", o: ["Build an account assignment rule.", "Create a formula field.", "Build a flow with Flow Builder.", "Create an account approval process."], c: [2] },
+    
+    // Question 58
+    { t: "What is a benefit of developing applications in a multi-tenant environment?", o: ["Enforced unit testing and code coverage best practices", "Preconfigured storage for big data", "Unlimited processing power and memory", "Access to predefined computing resources"], c: [0] },
+    
+    // Question 59
+    { t: "Universal Containers (UC) uses a custom object called Vendor. The Vendor custom object has a master-detail relationship with the standard Account object. Based on some internal discussions, the UC administrator tried to change the master-detail relationship to a lookup relationship, but was not able to do so. What is a possible reason that this change was not permitted?", o: ["The Account object has a roll-up summary field on the Vendor object.", "The Account object does not allow changing a field type for a custom field.", "Some of the Vendor records have null for the Account field.", "The organization wide default for the Vendor object is Public Read/Write."], c: [0] },
+    
+    // Question 60
+    { t: "Universal Containers wants to automatically assign new cases to the appropriate support representative based on the case origin. They have created a custom field on the Case object to store the support representative name. What is the best solution to assign the case to the appropriate support representative?", o: ["Use a formula field on the Case object.", "Use a trigger on the Case object.", "Use a validation rule on the Case object.", "Use an Assignment Flow element."], c: [3] },
+    
+    { 
+        t: "An Apex method, getAccounts, that returns a list of Accounts given a searchTerm, is available for Lightning Web Components to use.\n\nWhat is the correct definition of a Lightning Web Component property that uses the getAccounts method?", 
+        o: ["@wire(getAccounts, { searchTerm: '$searchTerm' }) accounts;", "@wire(getAccounts, { searchTerm: 'searchTerm' }) accounts;", "@wire(getAccounts, '$searchTerm') accounts;", "const accounts = getAccounts({ searchTerm: '$searchTerm' });"], 
+        c: [0] 
+    },
+    { 
+        t: "What should a developer use to fix a Lightning web component bug in a sandbox?", 
+        o: ["Force.com IDE", "VS Code", "Execute Anonymous", "Developer Console"], 
+        c: [1] 
+    },
+    { 
+        t: "What are two considerations for deploying from a sandbox to production?", 
+        o: ["All triggers must have at least one line of test coverage", "At least 75% of Apex code must be covered by unit tests", "Should deploy during business hours to ensure feedback can be quickly addressed", "Unit tests must have calls to the System.assert method"], 
+        c: [0, 1] 
+    },
+    { 
+        t: "Given the following Apex statement:\nAccount myAccount = [SELECT Id, Name FROM Account];\n\nWhat occurs when more than one Account is returned by the SOQL query?", 
+        o: ["The query fails and an error is written to the debug log.", "The variable is automatically cast to the List data type.", "An unhandled exception is thrown and the code terminates.", "The first Account returned is assigned to the variable."], 
+        c: [2] 
+    },
+    { 
+        t: "Consider the following code snippet:\npublic static List<Lead> obtainAllFields(Set<Id> leadIds) {\n    List<Lead> results = new List<Lead>();\n    for (Id leadId : leadIds) {\n        results.add([SELECT FIELDS(STANDARD) FROM Lead WHERE Id = :leadId]);\n    }\n    return results;\n}\n\nGiven the multi-tenant architecture of the Salesforce platform, what is a best practice a developer should implement to ensure successful execution?", 
+        o: ["Avoid executing queries without a limit clause.", "Avoid using variables as query filters.", "Avoid returning an empty List of records.", "Avoid performing queries inside for loops."], 
+        c: [3] 
+    },
+    { 
+        t: "A custom Visualforce controller calls the ApexPages.addMessage method, but no messages are rendering on the page.\n\nWhich component should be added to the Visualforce page to display the message?", 
+        o: ["<apex:pageMessages />", "<apex:message />", "<apex:pageMessage />", "<apex:form />"], 
+        c: [0] 
+    },
+    { 
+        t: "A developer has identified a method in an Apex class that performs resource intensive actions in memory by iterating over the result set of a SOQL statement on the account. The method also performs DML statements to save the changes to the database.\n\nWhich two techniques should the developer implement as a best practice to ensure transaction control and avoid exceeding governor limits?", 
+        o: ["Use the @ReadOnly annotation to bypass the number of rows returned by a SOQL.", "Use the System.limit methods to enforce database integrity.", "Use partial DML statements to ensure only valid data is committed.", "Use the for-loop SOQL syntax to process records in batches to control heap size."], 
+        c: [2, 3] 
+    },
+    { 
+        t: "Universal Containers wants to ensure that all new leads created in the system have a valid email address. They have already created a validation rule to enforce this requirement, but want to add an additional layer of validation using automation.\n\nWhat would be the best solution for this requirement?", 
+        o: ["Lightning Web Component", "REST API Callout", "Use a before save trigger on the Lead object to validate the email address.", "AppExchange package"], 
+        c: [2] 
+    },
+    { 
+        t: "A developer needs to prevent the creation of test records when certain conditions exist in the system. A class exists that checks the conditions.\n\nWhat is the correct implementation?", 
+        o: ["Use Test.isRunningTest()", "Use Test.startTest()", "Use Test.loadData()", "Use System.assert()"], 
+        c: [0] 
+    },
+    { 
+        t: "What are two ways a developer can get the status of an enqueued job for a class that implements the Queueable interface?", 
+        o: ["View the Apex Jobs page", "Query the AsyncApexJob object", "View the Apex Flex Queue", "View the Paused Flow Interviews page"], 
+        c: [0, 1] 
+    },
+    { 
+        t: "A Salesforce administrator used Flow Builder to create a flow named 'accountOnboarding'. The flow must be used inside an Aura component.\n\nWhich tag should a developer use to display the flow in the component?", 
+        o: ["<lightning:flow />", "<apex:flow />", "<flow:interview />", "<lightning:component />"], 
+        c: [0] 
+    },
+    { 
+        t: "A developer is asked to perform a security review of an Apex class. Within the class, the developer identifies a method as a security threat due to potential SOQL injection.\n\nWhat are two ways the developer can update the method to prevent a SOQL injection attack?", 
+        o: ["Use variable binding (bind variables) in the dynamic query.", "Use the escapeSingleQuotes method to sanitize user input.", "Replace the dynamic query with a static SOQL query.", "Use the with sharing keyword on the class."], 
+        c: [0, 1] 
+    },
+    { 
+        t: "Developers at Universal Containers (UC) use version control to share their code changes, but they notice that when they deploy their code to different environments they often have failures. They decide to set up Continuous Integration (CI).\n\nWhat should the UC development team use to automatically run tests as part of their CI process?", 
+        o: ["Developer Console", "VS Code", "Salesforce CLI", "Force.com Migration Tool"], 
+        c: [2] 
+    },
+    { 
+        t: "The OrderHelper class is a utility class that contains business logic for processing orders. A developer needs to create a constant named DELIVERY_MULTIPLIER with a value of 4.15. The value of the constant should not change at any time in the code.\n\nHow should the developer declare the DELIVERY_MULTIPLIER constant?", 
+        o: ["public decimal DELIVERY_MULTIPLIER = 4.15;", "public static decimal DELIVERY_MULTIPLIER = 4.15;", "public static final decimal DELIVERY_MULTIPLIER = 4.15;", "public final decimal DELIVERY_MULTIPLIER = 4.15;"], 
+        c: [2] 
+    },
+    { 
+        t: "What are two characteristics related to formulas?", 
+        o: ["Fields that are used in a formula field can be deleted or edited without editing the formula.", "Formulas can reference values on related objects.", "Formulas are calculated at runtime and are not stored in the database.", "Formulas can reference themselves."], 
+        c: [1, 2] 
+    },
+    { 
+        t: "A custom object Trainer has a lookup field to another custom object Gym. Which SOQL query will get the record for the Viridian City Gym and all its trainers?", 
+        o: ["SELECT Id, (SELECT Id FROM Trainers__r) FROM Gym__c WHERE Name = 'Viridian City Gym'", "SELECT Id, (SELECT Id FROM Gyms__r) FROM Trainer__c WHERE Name = 'Viridian City Gym'", "SELECT Id, Trainer__r.Id FROM Gym__c WHERE Name = 'Viridian City Gym'", "SELECT Id FROM Trainer__c WHERE Gym__r.Name = 'Viridian City Gym'"], 
+        c: [0] 
+    },
+    { 
+        t: "A developer wants to import 500 Opportunity records into a sandbox. Why should the developer choose to use Data Loader instead of Data Import Wizard?", 
+        o: ["Data Loader automatically relates records.", "Data Import Wizard does not support Opportunities.", "Data Loader runs from the developer's browser.", "Data Import Wizard cannot import 500 records."], 
+        c: [1] 
+    },
+    { 
+        t: "A software company is using Salesforce to track the companies they sell their software to in the Account object. They also use Salesforce to track bugs in their software with a custom object, Bug.\n\nAs part of a process improvement initiative, they want to be able to report on which companies have reported which bugs. Each company should be able to report multiple bugs and bugs can also be reported by multiple companies.\n\nWhat is needed to allow this reporting?", 
+        o: ["Lookup field on Bug to Account", "Lookup field on Account to Bug", "Junction object between Account and Bug", "Master-detail field on Bug to Account"], 
+        c: [2] 
+    },
+    { 
+        t: "Consider the following code snippet for a Visualforce page that is launched using a Custom Button on the Account detail page layout:\n<apex:page standardController='Account' extensions='MyExtension'>\n\nWhen the Save button is pressed, the developer must perform a complex validation that involves multiple objects and, upon success, redirect the user to another Visualforce page.\n\nWhat can the developer use to meet this business requirement?", 
+        o: ["Apex Trigger", "Custom Controller", "Controller Extension", "Standard Controller"], 
+        c: [2] 
+    },
+    { 
+        t: "A developer is alerted to an issue with a custom Apex trigger that is causing records to be duplicated. What is the most appropriate debugging approach to troubleshoot the issue?", 
+        o: ["Use the Apex Test Runner to step through the code.", "Add System.debug statements to the code to track the execution.", "Use the Event Log Files to identify the source.", "Disable the trigger in production."], 
+        c: [1] 
+    },
+    { 
+        t: "A Lightning component has a wired property searchResults, that stores a list of Opportunities. Which definition of the Apex method, to which the searchResults property is wired, should be used?", 
+        o: ["@AuraEnabled", "@AuraEnabled(cacheable=true)", "public static List<Opportunity> getOpportunities()", "@RemoteAction"], 
+        c: [1] 
+    },
+    { 
+        t: "Refer to the following Apex code:\nInteger x = 0;\ndo {\n    x++;\n} while (false);\nSystem.debug(x);\n\nWhat is the value of x when it is written to the debug log?", 
+        o: ["0", "1", "2", "Null"], 
+        c: [1] 
+    },
+    { 
+        t: "A credit card company needs to implement the functionality for a service agent to process damaged or stolen credit cards. When the customers call in, the service agent must gather many pieces of information. A developer is tasked to implement this functionality.\n\nWhat should the developer use to satisfy this requirement in the most efficient manner?", 
+        o: ["Lightning Component", "Visualforce Page", "Approval Process", "Screen Flow"], 
+        c: [3] 
+    },
+    { 
+        t: "A developer must troubleshoot to pinpoint the causes of performance issues when a custom page loads in their org. Which tool should the developer use to troubleshoot query performance?", 
+        o: ["Developer Console Query Plan Tool", "Setup Menu", "AppExchange", "VS Code"], 
+        c: [0] 
+    },
+    { 
+        t: "The following code snippet is executed by a Lightning web component in an environment with more than 2,000 lead records:\n@AuraEnabled\npublic static void updateLeads() {\n    for (Lead thisLead : [SELECT Id, LeadSource FROM Lead]) {\n        thisLead.LeadSource = 'Web';\n        update thisLead;\n    }\n}\n\nWhich governor limit will likely be exceeded within the Apex transaction?", 
+        o: ["Total number of records retrieved by SOQL queries", "Total number of SOQL statements issued", "Total number of DML statements issued", "CPU time limit"], 
+        c: [2] 
+    },
+    { 
+        t: "The values 'High', 'Medium', and 'Low' are identified as common values for multiple picklists across different objects. What is an approach a developer can take to streamline maintenance of the picklists and their values, while also restricting the values to the ones mentioned above?", 
+        o: ["Create the picklist on each object and use a Global Value Set containing the values.", "Create the picklist on each object and add a validation rule.", "Create a custom object for the values.", "Create a restricted picklist on each object manually."], 
+        c: [0] 
+    },
+    { 
+        t: "What is an example of a polymorphic lookup field in Salesforce?", 
+        o: ["The ParentId field on the standard Account object", "The WhatId field on the standard Event object", "The LeadId on CampaignMember", "The ContactId on Case"], 
+        c: [1] 
+    },
+    { 
+        t: "A developer is asked to prevent anyone other than a user with Sales Manager profile from changing the Opportunity Status to Closed Lost if the lost reason is blank. Which automation allows the developer to satisfy this requirement in the most efficient manner?", 
+        o: ["Apex trigger on Opportunity", "Flow Builder", "Validation Rule", "Approval Process"], 
+        c: [2] 
+    },
+    { 
+        t: "A developer has the following requirements:\n1. Calculate the total amount on an Order.\n2. Calculate the line amount for each Line Item based on quantity selected and price.\n3. Move Line Items to a different Order if a Line Item is not in stock.\n\nWhich relationship implementation supports these requirements on its own?", 
+        o: ["Order has a reparentable Master-Detail relationship to Line Item", "Line Item has a reparentable Master-Detail relationship to Order", "Order has a Lookup relationship to Line Item", "Line Item has a Lookup relationship to Order"], 
+        c: [1] 
+    },
+    { 
+        t: "Universal Containers wants to back up all of the data and attachments in its Salesforce org once a month. Which approach should a developer use to meet this requirement?", 
+        o: ["Use the Data Loader command line", "Schedule a Report", "Define Data Export Service scheduled job", "Use the Salesforce CLI"], 
+        c: [2] 
+    },
+    { 
+        t: "Universal Containers is developing a new Lightning web component for their marketing department. They want to ensure that the component is fine tuned and provides a seamless user experience. What are some benefits of using the Lightning Component framework?", 
+        o: ["Out-of-the-box components and event-driven architecture", "Compatibility with all browsers", "Automatic support for accessibility standards", "Better performance due to client-side rendering"], 
+        c: [0] 
+    },
+    { 
+        t: "While developing an Apex class with custom search functionality that will be launched from a Lightning Web Component, how can the developer ensure only records accessible to the currently logged in user are displayed?", 
+        o: ["Use the 'without sharing' keyword", "Use the 'with sharing' keyword", "Use the 'inherited sharing' keyword", "Use the Schema.describe calls"], 
+        c: [1] 
+    },
+    { 
+        t: "Which statement describes the execution order when triggers are associated to the same object and event?", 
+        o: ["Triggers are executed in the order they are created.", "Triggers are executed in the order they are modified.", "Triggers are executed alphabetically.", "The order of execution is not guaranteed."], 
+        c: [3] 
+    },
+    { 
+        t: "What are two ways for a developer to execute tests in an org?", 
+        o: ["Apex Test Execution page in Setup", "Developer Console", "Metadata API", "Salesforce CLI"], 
+        c: [0, 1] 
+    },
+    { 
+        t: "Given the following Anonymous block:\nList<Case> casesToUpdate = new List<Case>();\nfor(Case thisCase : [SELECT Id, Status FROM Case LIMIT 10000]) {\n    thisCase.Status = 'Working';\n    casesToUpdate.add(thisCase);\n}\ntry {\n    Database.update(casesToUpdate, false);\n} catch (Exception e) {\n    System.debug(e.getMessage());\n}\n\nWhat should a developer consider for an environment that has over 10,000 Case records?", 
+        o: ["The transaction will succeed and changes committed.", "The try block will catch any DML exceptions.", "The transaction will fail due to exceeding the governor limit for DML statements.", "The transaction will fail due to exceeding the governor limit for SOQL query rows."], 
+        c: [2] 
+    },
+    { 
+        t: "A software company uses the following objects and relationships:\n- Case: to handle customer support issues.\n- Defect: custom object to represent known issues.\n- Case_Defect__c: a junction object between Case and Defect.\n\nCase and Defect have Private organization-wide defaults. What should be done to share a specific Defect record with a user?", 
+        o: ["Share the Case_Defect__c record.", "Share the Defect record.", "Share the parent Case record and Defect_c.", "Use Apex Managed Sharing on the junction object."], 
+        c: [2] 
+    },
+    { 
+        t: "A developer is creating a page that allows users to create multiple Opportunities. The developer is asked to verify the current user's default Opportunity record type, and set certain default values based on the record type before inserting the record.\n\nHow can the developer find the current user's default record type?", 
+        o: ["Use the Schema.DescribeSObjectResult to query the record type infos.", "Query the RecordType object.", "Use the UI API.", "Create a dummy opportunity and check its record type."], 
+        c: [0] 
+    },
+    { 
+        t: "Which steps allow a custom Scalable Vector Graphic (SVG) to be used in a Lightning web component?", 
+        o: ["Upload the SVG as a Static Resource.", "Import the Static Resource in the JS file.", "Reference the getter in the HTML template.", "Import the SVG as a content asset file."], 
+        c: [0, 1, 2] 
+    },
+    { 
+        t: "A development team wants to use a deployment script to automatically deploy to a sandbox during their development cycles. Which two tools can they use to run a script that deploys to a sandbox?", 
+        o: ["VS Code", "Developer Console", "Salesforce CLI (SFDX)", "Ant Migration Tool"], 
+        c: [2, 3] 
+    },
+    { 
+        t: "Which three actions may cause triggers to fire?", 
+        o: ["Renaming a record", "Updates to FeedItem", "Cascading delete operations", "Insert of a record via Data Loader"], 
+        c: [1, 2, 3] 
+    },
+    { 
+        t: "A developer created a Lightning web component called component1 to be inserted into the Account record page. Which two changes should the developer make to the meta-xml file to make the component available?", 
+        o: ["Set isExposed to true.", "Add lightning__RecordPage to targets.", "Set isExposed to false.", "Add lightning__AppPage to targets."], 
+        c: [0, 1] 
+    },
+    { 
+        t: "Which two characteristics are true for Lightning Web Component custom events?", 
+        o: ["Data may be passed in the payload of a custom event using a property called detail.", "By default, custom events bubbles: true.", "By default, custom events composed: false.", "Custom events can only propagate to the immediate parent."], 
+        c: [0, 3] 
+    },
+    { 
+        t: "A developer must create a Drawing class that provides capabilities defined in the Sortable and Drawable interfaces.\n\nWhich is the correct implementation?", 
+        o: ["public class Drawing implements Sortable, Drawable", "public class Drawing extends Sortable, Drawable", "public class Drawing implements Sortable extends Drawable", "public class Drawing extends Sortable implements Drawable"], 
+        c: [0] 
+    },
+    { 
+        t: "Which statement should be used to allow some of the records in a list of records to be inserted if others fail to be inserted?", 
+        o: ["insert records;", "Database.insert(records, true);", "Database.insert(records, false);", "upsert records;"], 
+        c: [2] 
+    },
+    { 
+        t: "A developer wants to mark each Account in a List<Account> as either Active or Inactive, based on the value in the LastModifiedDate field being greater than 90 days in the past. Which Apex technique should the developer use?", 
+        o: ["For loop", "While loop", "Switch statement", "Do-while loop"], 
+        c: [0] 
+    },
+    { 
+        t: "Universal Containers recently transitioned to Lightning Experience. They want a button on the Opportunity record page that sends an HTTP REST callout to an external system.\n\nWhich method should the developer implement to fulfill this requirement?", 
+        o: ["Create a Lightning Quick Action that calls an LWC/Aura component to perform the callout.", "Create a JavaScript button.", "Create a custom link.", "Create an Apex trigger."], 
+        c: [0] 
+    },
+    { 
+        t: "What should a developer do to check the code coverage of a class after running all tests?", 
+        o: ["View the Class Test Percentage tab in Setup.", "View the Overall Code Coverage panel in the Developer Console.", "View the Code Coverage column in the Apex Classes page.", "Query the ApexCodeCoverage object."], 
+        c: [1] 
+    },
+    { 
+        t: "A developer wants to get access to the standard price book in the org while writing a test class that covers an OpportunityLineItem trigger. Which method allows access to the price book?", 
+        o: ["Test.getStandardPricebookId();", "Query the Pricebook2 object.", "Create a new Pricebook2 record.", "Use @isTest(SeeAllData=true)"], 
+        c: [0] 
+    },
+    { 
+        t: "How can a developer check the test coverage of autolaunched Flows before deploying them in a change set?", 
+        o: ["Use the Tooling API", "Use the Flow Properties page", "Use the Apex Test Execution page", "Check the 'Flow Test Coverage' in Process Automation Settings"], 
+        c: [0] 
+    },
+    { 
+        t: "A developer has a single custom controller class that works with a Visualforce Wizard to support creating and editing multiple sObjects. The wizard accepts data from user inputs across multiple Visualforce pages.\n\nWhich three statements are useful inside the unit test to effectively test the custom controller?", 
+        o: ["Test.setCurrentPage(pageRef);", "ApexPages.currentPage().getParameters().put('key', 'value');", "controller.save();", "Test.startTest();"], 
+        c: [0, 1, 2] 
+    },
+    { 
+        t: "A developer creates a custom exception class.\npublic class MyException extends Exception {}\n\nWhat code raises this exception?", 
+        o: ["throw new MyException();", "return new MyException();", "call MyException();", "MyException.throw();"], 
+        c: [0] 
+    },
+    { 
+        t: "Which annotation should a developer use on an Apex method to make it available to be wired to a property in a Lightning web component?", 
+        o: ["@AuraEnabled(cacheable=true)", "@AuraEnabled", "@RemoteAction", "@InvocableMethod"], 
+        c: [0] 
+    },
+    { 
+        t: "The sales management team at Universal Containers requires that the Lead Source field of the Lead record be populated when a Lead is converted. What should be done to ensure that a user populates the Lead Source field prior to converting a Lead?", 
+        o: ["Create a Validation Rule on Lead.", "Create a Validation Rule on Account.", "Use a Lead Convert setting.", "Create an Apex Trigger."], 
+        c: [0] 
+    },
+    { 
+        t: "A company decides to implement a new process where every time an Opportunity is created, a follow up Task should be created and assigned to the Opportunity Owner. What is the most efficient way for a developer to implement this?", 
+        o: ["Record-triggered Flow", "Apex Trigger", "Workflow Rule", "Process Builder"], 
+        c: [0] 
+    },
+    { 
+        t: "A developer is asked to write helper methods that create test data for unit tests. The methods are in a class 'TestUtils'. What should be changed in the TestUtils class so that its methods are only usable by unit test methods?", 
+        o: ["Annotate the class with @isTest", "Declare the methods as private", "Use the @TestVisible annotation", "Deploy the class to a test folder"], 
+        c: [0] 
+    },
+    { 
+        t: "As part of a new development, a developer needs to build a responsive application capable of responding to touch events. Which two technologies are built on a framework that fully supports these requirements?", 
+        o: ["Lightning Web Components", "Aura Components", "Visualforce", "S-Controls"], 
+        c: [0, 1] 
+    },
+    { 
+        t: "Cloud Kicks Fitness, an ISV Salesforce partner, is developing a managed package application. One of the application modules allows the user to calculate body fat using the Apex class BodyFat and its method calculateBodyFat().\n\nThe product owner wants to ensure this method is accessible by the consumer of the application when developing customizations outside the ISV's package namespace.\n\nWhich approach should a developer take?", 
+        o: ["Declare the class and method using the global access modifier.", "Declare the class as public and the method as global.", "Declare the class and method as public.", "Use the @NamespaceAccessible annotation."], 
+        c: [0] 
+    },
+    { 
+        t: "Universal Containers has a large number of custom applications that were built using a third-party JavaScript framework and exposed using Visualforce pages. The company wants to update these applications to apply styling that resembles the look and feel of Lightning Experience.\n\nWhat should the developer do to fulfill the business request in the quickest and most effective manner?", 
+        o: ["Incorporate the Salesforce Lightning Design System (SLDS) CSS stylesheet.", "Rewrite all pages as Lightning Web Components.", "Use the standardStylesheets='true' attribute.", "Set the attribute enableLightning to true."], 
+        c: [0] 
+    },
+
+    // --- SET 3 (60 Questions) - Salesforce Platform Developer I ---
+    
+    // Question 1
+    { t: "Universal Containers (UC) processes orders in Salesforce in a custom object, Order__c. They also allow sales reps to upload CSV files with thousands of orders at a time. A developer is tasked with integrating orders placed in Salesforce with UC's enterprise resource planning (ERP) system. After the status for an Order__c is first set to Placed, the order information must be sent to a REST endpoint in the ERP system that can process one order at a time. What should the developer implement to accomplish this?", o: ["Callout from a queueable class called from a trigger", "Callout from a Batchable class called from a scheduled job", "Flow with a callout from an invocable method", "Callout from a future method called from a trigger"], c: [0] },
+    
+    // Question 2
+    { t: "A developer needs to implement a custom SOAP Web Service that is used by an external Web Application. The developer chooses to include helper methods that are not used by the Web Application in the implementation of the Web Service Class. Which code segment shows the correct declaration of the class and methods?", o: ["global class WebServiceClass { private static Boolean helperMethod() {} global String updateRecords() {} }", "webservice class WebServiceClass { private static Boolean helperMethod() {} global static String updateRecords() {} }", "webservice class WebServiceClass { private static Boolean helperMethod() {} webservice static String updateRecords() {} }", "global class WebserviceClass { private static Boolean helperMethod() {} webservice static String updateRecords(){} }"], c: [3] },
+    
+    // Question 3
+    { t: "The value of the account type field is not being displayed correctly on the page. Assuming the custom controller is properly referenced on the Visualforce page, what should the developer do to correct the problem?", o: ["Add a getter method for the actType attribute.", "Change theAccount attribute to public.", "Add with sharing to the custom controller.", "Convert theAccount.Type to a String."], c: [3] },
+    
+    // Question 4
+    { t: "What are three characteristics of change set deployments?", o: ["Change sets can only be used between related organizations.", "Deployment is done in a one-way, single transaction.", "Change sets can be used to transfer records.", "Sending a change set between two orgs requires a deployment connection.", "Change sets can deploy custom settings data."], c: [0,1,3] },
+    
+    // Question 5
+    { t: "A development team wants to use a deployment script to automatically deploy to a sandbox during their development cycles. Which two tools can they use to run a script that deploys to a sandbox?", o: ["SFDX CLI", "Developer Console", "Change Sets", "Ant Migration Tool"], c: [0,3] },
+    
+    // Question 6
+    { t: "Which two operations affect the number of times a trigger can fire?", o: ["Criteria-based sharing calculations", "Email messages", "Roll-up summary fields", "After-save record-triggered flow"], c: [2,3] },
+    
+    // Question 7
+    { t: "A developer needs to have records with specific field values in order to test a new Apex class. What should the developer do to ensure the data is available to the test?", o: ["Use SOQL to query the org for the required data.", "Use Test.loadData and reference a CSV file in a static resource.", "Use Anonymous Apex to create the required data.", "Use Test.loadData and reference a JSON file in Documents."], c: [1] },
+    
+    // Question 8
+    { t: "A developer wants to import 500 Opportunity records into a sandbox. Why should the developer choose to use Data Loader instead of Data Import Wizard?", o: ["Data Import Wizard does not support Opportunities.", "Data Loader automatically relates Opportunities to Accounts.", "Data Loader runs from the developers browser.", "Data Import Wizard can not import all 500 records."], c: [0] },
+    
+    // Question 9
+    { t: "Managers at Universal Containers want to ensure that only decommissioned containers are able to be deleted in the system. To meet the business requirement a Salesforce developer adds Decommissioned as a picklist value for the Status__c custom field within the Container__c object. Which two approaches could a developer use to enforce only Container records with a status of Decommissioned can be deleted?", o: ["Before record-triggered flow", "Apex trigger", "After record-triggered flow", "Validation rule"], c: [0,3] },
+    
+    // Question 10
+    { t: "A developer creates a batch Apex job to update a large number of records, and receives reports of the job timing out and not completing. What is the first step towards troubleshooting the issue?", o: ["Check the asynchronous job monitoring page to view the job status and logs.", "Check the debug logs for the batch job.", "Decrease the batch size to reduce the load on the system.", "Disable the batch job and recreate it with a smaller number of records."], c: [0] },
+    
+    // Question 11
+    { t: "How should a developer write unit tests for a private method in an Apex class?", o: ["Use the SeeAllData annotation.", "Add a test method in the Apex class.", "Mark the Apex class as global.", "Use the @TestVisible annotation."], c: [3] },
+    
+    // Question 12
+    { t: "Which three Salesforce resources can be accessed from a Lightning web component?", o: ["Content asset files", "Third-party web components", "SVG resources", "Static resources", "All external libraries"], c: [0,2,3] },
+    
+    // Question 13
+    { t: "Which two settings must be defined in order to update a record of a junction object?", o: ["ReadWrite access on the secondary relationship", "ReadWrite access on the primary relationship", "ReadWrite access on the junction object", "Read access on the primary relationship"], c: [1,0] },
+    
+    // Question 14
+    { t: "A team of developers is working on a source-driven project that allows them to work independently, with many different org configurations. Which type of Salesforce orgs should they use for their development?", o: ["Developer sandboxes", "Full Copy sandboxes", "Developer orgs", "Scratch orgs"], c: [3] },
+    
+    // Question 15
+    { t: "Universal Containers wants a list button to display a Visualforce page that allows users to edit multiple records. Which Visualforce feature supports this requirement?", o: ["Standard Controller with Custom List Controller extension", "Custom List Controller with recordSetVar page attribute", "Controller Extension and apex:listButton tag", "Standard controller and the recordSetVar page attribute"], c: [3] },
+    
+    // Question 16
+    { t: "What is the value of the Trigger.old context variable in a before insert trigger?", o: ["An empty list of sObjects", "Undefined", "null", "A list of newly created sObjects without IDs"], c: [2] },
+    
+    // Question 17
+    { t: "For which three items can a trace flag be configured?", o: ["Apex Class", "Flow", "User", "Visualforce", "Apex Trigger"], c: [0,2,4] },
+    
+    // Question 18
+    { t: "A developer creates a new Apex trigger with a helper class, and writes a test class that only exercises 95% coverage of the new Apex helper class. Change Set deployment to production fails with the test coverage warning 'Test coverage of selected Apex Trigger is 0, at least 1% test coverage is required.' What should the developer do to successfully deploy the new Apex trigger and helper class?", o: ["Increase the test class coverage on the helper class.", "Create a test class and methods to cover the Apex trigger.", "Remove the failing test methods from the test class.", "Run the tests using the Run All Tests method."], c: [1] },
+    
+    // Question 19
+    { t: "Universal Containers decided to transition from Classic to Lightning Experience. They asked a developer to replace a JavaScript button that was being used to create records with prepopulated values. What can the developer use to accomplish this?", o: ["Validation rules", "Apex triggers", "Record triggered flows", "Quick Actions"], c: [3] },
+    
+    // Question 20
+    { t: "Universal Containers has developed custom Apex code and Lightning Components in a Sandbox environment. They need to deploy the code and associated configurations to the Production environment. What is the recommended process for deploying the code and configurations to Production?", o: ["Use the Force.com IDE to deploy the Apex code and Lightning Components.", "Use the Ant Migration Tool to deploy the Apex code and Lightning Components.", "Use a change set to deploy the Apex code and Lightning Components.", "Use Salesforce CLI to deploy the Apex code and Lightning Components."], c: [3] },
+    
+    // Question 21
+    { t: "In the following example, which sharing context will myMethod execute when it is invoked? public class myClass { public void myMethod() {} }", o: ["Sharing rules will be enforced by the instantiating class.", "Sharing rules will be enforced for the running user.", "Sharing rules will not be enforced for the running user.", "Sharing rules will be inherited from the calling context."], c: [3] },
+    
+    // Question 22
+    { t: "Use Test.loadData and reference a CSV file in a static resource.", o: ["Use SOQL to query the org for the required data.", "Use Test.loadData and reference a CSV file in a static resource.", "Use Anonymous Apex to create the required data.", "Use Test.loadData and reference a JSON file in Documents."], c: [1] },
+    
+    // Question 23
+    { t: "In terms of the MVC paradigm, what are two advantages of implementing the view layer of a Salesforce application using Lightning Web Component-based development over Visualforce?", o: ["Log capturing via the Debug Logs Setup page", "Built-in standard and custom set controllers", "Self-contained and reusable units of an application", "Rich component ecosystem"], c: [2,3] },
+    
+    // Question 24
+    { t: "Universal Containers (UC) wants to lower its shipping cost while making the shipping process more efficient. The Distribution Officer advises UC to implement global addresses to allow multiple Accounts to share a default pickup address. Which field should the developer add to create the most efficient model?", o: ["Add a master-detail field on the Global Address object to the Account object.", "Add a master-detail field on the Account object to the Global Address object.", "Add a lookup field on the Global Address object to the Account object.", "Add a lookup field on the Account object to the Global Address object."], c: [3] },
+    
+    // Question 25
+    { t: "What should a developer use to script the deployment and unit test execution as part of continuous integration?", o: ["Execute Anonymous", "Salesforce CLI", "VS Code", "Developer Console"], c: [1] },
+    
+    // Question 26
+    { t: "A developer must provide custom user interfaces when users edit a Contact in either Salesforce Classic or Lightning Experience. What should the developer use to override the Contacts Edit button?", o: ["A Lightning page in Salesforce Classic and a Visualforce page in Lightning Experience", "A Lightning component in Salesforce Classic and a Lightning component in Lightning Experience", "A Visualforce page in Salesforce Classic and a Lightning page in Lightning Experience", "A Visualforce page in Salesforce Classic and a Lightning component in Lightning Experience"], c: [3] },
+    
+    // Question 27
+    { t: "What are two characteristics related to formulas?", o: ["Formulas are calculated at runtime and are not stored in the database.", "Formulas can reference themselves.", "Formulas can reference values in related objects.", "Fields that are used in a formula field can be deleted or edited without editing the formula."], c: [0,2] },
+    
+    // Question 28
+    { t: "A developer is designing a new application on the Salesforce platform and wants to ensure it can support multiple tenants effectively. Which design framework should the developer consider?", o: ["Waterfall Model", "Flux view, action, dispatcher, and store", "Model-View-Controller (MVC)", "Agile Development"], c: [2] },
+    
+    // Question 29
+    { t: "What should a developer use to obtain the Id and Name of all the Leads, Accounts, and Contacts that have the company name Universal Containers?", o: ["FIND 'Universal Containers' IN CompanyName Fields RETURNING lead(id, name), account(id, name), contact(id, name)", "SELECT Lead.id, Lead.Name, Account.Id, Account.Name, Contact.Id, Contact.Name FROM Lead, Account, Contact WHERE CompanyName = 'Universal Containers'", "FIND 'Universal Containers' IN Name Fields RETURNING lead(id, name), account(id, name), contact(id, name)", "SELECT lead.id, name, account.id, name, contact.id, name FROM Lead, Account, Contact WHERE Name = 'Universal Containers'"], c: [2] },
+    
+    // Question 30
+    { t: "Which two are phases in the Aura application event propagation framework?", o: ["Emit", "Default", "Bubble", "Control"], c: [1,2] },
+    
+    // Question 31
+    { t: "Which three statements are accurate about debug logs?", o: ["System debug logs are retained for 24 hours.", "Debug log levels are cumulative, where FINE log level includes all events logged at the DEBUG, INFO, WARN, and ERROR levels.", "Only the 20 most recent debug logs for a user are kept.", "Debug logs can be set for specific users, classes, and triggers.", "The maximum size of a debug log is 5 MB."], c: [0,3,1] },
+    
+    // Question 32
+    { t: "Universal Containers has a Visualforce page that displays a table of every Container__c being rented by a given Account. Recently this page is failing with a view state limit because some of the customers rent over 10,000 containers. What should a developer change?", o: ["Implement pagination with an OffsetController.", "Implement pagination with a StandardSetController.", "Use JavaScript remoting with SOQL Offset.", "Use lazy loading and a transient List variable."], c: [1] },
+    
+    // Question 33
+    { t: "What does the Lightning Component framework provide to developers?", o: ["Support for Classic and Lightning UIs", "Prebuilt components that can be reused", "Templates to create custom components", "Extended governor limits for applications"], c: [1] },
+    
+    // Question 34
+    { t: "A developer created a trigger on a custom object. This custom object also has some dependent picklists. According to the order of execution rules, which step happens first?", o: ["The original record is loaded from the database.", "System validation is run for maximum field lengths.", "Old values are overwritten with the new record values.", "JavaScript validation is run in the browser."], c: [0] },
+    
+    // Question 35
+    { t: "Universal Containers implemented a private sharing model for the Account object. A custom Account search tool was developed with Apex to help sales representatives find accounts that match multiple criteria they specify. Users report they can see Accounts they do not own. What should the developer use to enforce sharing permissions?", o: ["Use the with sharing keyword on the class declaration.", "Use the without sharing keyword on the class declaration.", "Use the UserInfo Apex class to filter all SOQL queries to returned records owned by the logged-in user.", "Use the schema describe calls to determine if the logged-in user has access to the Account object."], c: [0] },
+    
+    // Question 36
+    { t: "Universal Containers is building a recruiting app with an Applicant object that stores information about an individual person and a Job object that represents a job. Each applicant may apply for more than one job. What should a developer implement?", o: ["Junction object between Applicant and Job", "Lookup field from Applicant to Job", "Master-detail field from Applicant to Job", "Formula field on Applicant that references Job"], c: [0] },
+    
+    // Question 37
+    { t: "What are two considerations for running a flow in debug mode?", o: ["Callouts to external systems are not executed when debugging a flow.", "DML operations will be rolled back when the debugging ends.", "Input variables of type record cannot be passed into the flow.", "Clicking Pause or executing a Pause element closes the flow and ends debugging."], c: [3,2] },
+    
+    // Question 38
+    { t: "Since Aura application events follow the traditional publish-subscribe model, which method is used to fire an event?", o: ["fire()", "registerEvent()", "fireEvent()", "emit()"], c: [0] },
+    
+    // Question 39
+    { t: "When using Salesforce DX, what does a developer need to enable to create and manage scratch orgs?", o: ["Production", "Dev Hub", "Sandbox", "Environment Hub"], c: [1] },
+    
+    // Question 40
+    { t: "A developer deployed a trigger to update the Status__c of Assets related to an Account when the Account's status changes and a nightly integration that updates Accounts in bulk has started to fail with limit failures. What should the developer change about the code?", o: ["Change the getAssetsToUpdate method to process all Accounts in one call and call it outside of the for loop.", "Add a LIMIT clause to the SOQL query on line 16 to limit the number of Assets queried for an Account.", "Move all of the logic to a Queueable class that queries for and updates the Assets and call it from the trigger.", "Add List<Asset> assets = [SELECT Id, Status__c FROM Asset WHERE AccountId = :acctId] to line 14 and iterate over the assets list in the for loop on line 15."], c: [3] },
+    
+    // Question 41
+    { t: "A developer creates a custom exception as shown below: public class ParityException extends Exception {}. What are two ways the developer can fire the exception in Apex?", o: ["new ParityException(); throw new ParityException('parity does not match');", "new ParityException('parity does not match');", "throw new ParityException();", "throw new ParityException('parity does not match');"], c: [2,3] },
+    
+    // Question 42
+    { t: "Which code in a Visualforce page and/or controller might present a security vulnerability?", o: ["<apex:outputField value=\"{!ctrl.userInput}\" rendered=\"{!isEditable}\"/>", "<apex:outputText escape=\"false\" value=\"{!CurrentPage.parameters.userInput}\"/>", "<apex:outputField value=\"{!ctrl.userInput}\"/>", "<apex:outputText value=\"{!CurrentPage.parameters.userInput}\"/>"], c: [1] },
+    
+    // Question 43
+    { t: "What are two ways a developer can get the status of an enqueued job for a class that implements the Queueable interface?", o: ["View the Apex Flex Queue", "View the Apex Status page", "Query the AsyncApexJob object", "View the Apex Jobs page"], c: [2,3] },
+    
+    // Question 44
+    { t: "A developer identifies the following triggers on the Expense__c object: deleteExpense, applyDefaultsToExpense, validateExpenseUpdate. The triggers process before delete, before insert, and before update events respectively. Which two techniques should the developer implement to ensure trigger best practices are followed?", o: ["Create helper classes to execute the appropriate logic when a record is saved.", "Unify the before insert and before update triggers and use Flow for the delete action.", "Unify all three triggers in a single trigger on the Expense__c object that includes all events.", "Maintain all three triggers on the Expense__c object, but move the Apex logic out of the trigger definition."], c: [0,2] },
+    
+    // Question 45
+    { t: "Universal Hiring uses Salesforce to capture job applications. A Salesforce administrator created two custom objects Job__c acting as the master object, JobApplication__c acting as the detail. Within the Job__c object, a custom multi-select picklist, PreferredLocations__c, contains a list of approved states for the position. Recruiters want to view whether the Contact's Mailing State value matches a value selected on the PreferredLocations__c field. What is the recommended tool?", o: ["Roll-up summary field", "Apex trigger", "Formula field", "Record-triggered flow"], c: [3] },
+    
+    // Question 46
+    { t: "Which three steps allow a custom Scalable Vector Graphic (SVG) to be included in a Lightning web component?", o: ["Import the static resource and provide a JavaScript property for it.", "Reference the import in the HTML template.", "Reference the property in the HTML template.", "Import the SVG as a content asset file.", "Upload the SVG as a static resource."], c: [0,2,4] },
+    
+    // Question 47
+    { t: "A developer must perform a complex SOQL query that joins two objects in a Lightning component. How can the Lightning component execute the query?", o: ["Write the query in a custom Lightning web component wrapper and invoke from the Lightning component.", "Invoke an Apex class with the method annotated as @AuraEnabled to perform the query.", "Use the Salesforce Streaming API to perform the SOQL query.", "Create a flow to execute the query and invoke from the Lightning component."], c: [1] },
+    
+    // Question 48
+    { t: "Which two are best practices when it comes to Aura component and application event handling?", o: ["Reuse the event logic in a component bundle, by putting the logic in the helper.", "Handle low-level events in the event handler and re-fire them as higher-level events.", "Try to use application events as opposed to component events.", "Use component events to communicate actions that should be handled at the application level."], c: [0,1] },
+    
+    // Question 49
+    { t: "What is a consideration for running a flow in debug mode?", o: ["Callouts to external systems are not executed when debugging a flow.", "When debugging a schedule-triggered flow, the flow starts only for one record.", "DML operations will be rolled back when the debugging ends.", "Clicking Pause allows an element to be replaced in the flow."], c: [1] },
+    
+    // Question 50
+    { t: "A developer wrote Apex code that calls out to an external system using REST API. How should a developer write the test to prove the code is working as intended?", o: ["Write a class that implements WebServiceMock.", "Write a class that extends WebServiceMock.", "Write a class that extends HTTPCalloutMock.", "Write a class that implements HTTPCalloutMock."], c: [3] },
+    
+    // Question 51
+    { t: "Universal Containers (UC) is developing a process for their sales teams that requires all sales reps to go through a set of scripted steps with each new customer they create. In the first step of collecting information, UC's ERP system must be checked via a REST endpoint to see if the customer exists. Which two should a developer implement?", o: ["Trigger", "Invocable method", "Future method", "Flow"], c: [1,3] },
+    
+    // Question 52
+    { t: "A business has a proprietary Order Management System (OMS) that creates orders from its website and fulfills the orders. Each update from the OMS creates a new order record in Salesforce. Which two actions should prevent the duplicate order records?", o: ["Use the order number from the OMS as an external ID.", "Ensure that the order number in the OMS is unique.", "Use the email on the contact record as an external ID.", "Write a trigger on the Order object to delete the duplicates."], c: [0,1] },
+    
+    // Question 53
+    { t: "Which three data types can a SOQL query return?", o: ["sObject", "Double", "Long", "List", "Integer"], c: [0,3,4] },
+    
+    // Question 54
+    { t: "What is the result of the following code? Account a = new Account(); Database.insert(a, false);", o: ["The record will be created and no error will be reported.", "The record will not be created and an exception will be thrown.", "The record will not be created and no error will be reported.", "The record will be created and a message will be in the debug log."], c: [2] },
+    
+    // Question 55
+    { t: "When a user edits the Postal Code on an Account, a custom Account text field named Timezone must be updated based on the values in another custom object called PostalCodeToTimezone__c. What is the optimal way to implement this feature?", o: ["Build an account assignment rule.", "Create a formula field.", "Build a flow with Flow Builder.", "Create an account approval process."], c: [2] },
+    
+    // Question 56
+    { t: "What is a benefit of developing applications in a multi-tenant environment?", o: ["Enforced unit testing and code coverage best practices", "Preconfigured storage for big data", "Unlimited processing power and memory", "Access to predefined computing resources"], c: [0] },
+    
+    // Question 57
+    { t: "Universal Containers (UC) uses a custom object called Vendor__c. The Vendor__c custom object has a master-detail relationship with the standard Account object. The UC administrator tried to change the master-detail relationship to a lookup relationship, but was not able to do so. What is a possible reason?", o: ["The Account object has a roll-up summary field on the Vendor__c object.", "The Account object does not allow changing a field type for a custom field.", "Some of the Vendor__c records have null for the Account field.", "The organization wide default for the Vendor__c object is Public Read/Write."], c: [0] },
+    
+    // Question 58
+    { t: "Universal Containers wants to automatically assign new cases to the appropriate support representative based on the case origin. What is the best solution?", o: ["Use a formula field on the Case object.", "Use a trigger on the Case object.", "Use a validation rule on the Case object.", "Use an Assignment Flow element."], c: [3] },
+    
+    // Question 59
+    { t: "A developer wants to improve runtime performance of Apex calls by caching results on the client. What is the most efficient way to implement this?", o: ["Call the setStorable method on the action in the JavaScript client-side code.", "Decorate the server-side method with @AuraEnabled(cacheable=true).", "Decorate the server side method with @auraEnabled(storable=true).", "Set a cookie in the browser for use upon return to the page."], c: [1] },
+    
+    // Question 60
+    { t: "What can be used to override the Accounts standard Edit button for Lightning Experience?", o: ["Lightning flow", "Lightning action", "Lightning component", "Lightning page"], c: [2] },
+
+    // --- SET 4 (60 Questions) - Salesforce Platform Developer I ---
+    
+    // Question 1
+    { t: "A developer is implementing an Apex class for a financial system. Within the class, the variables creditAmount and debitAmount should not be able to change once a value is assigned. In which two ways can the developer declare the variables to ensure their value can only be assigned one time?", o: ["Use the static keyword and assign its value in the class constructor.", "Use the final keyword and assign its value in the class constructor.", "Use the static keyword and assign its value in a static initializer.", "Use the final keyword and assign its value when declaring the variable."], c: [1, 3] },
+    
+    // Question 2
+    { t: "An org has an existing flow that edits an Opportunity with an Update Records element. A developer must update the flow to also create a Contact and store the created Contacts ID on the Opportunity. Which update must the developer make in the flow?", o: ["Add a new Create Records element.", "Add a new Get Records element.", "Add a new Update Records element.", "Add a new Roll Back Records element."], c: [0] },
+    
+    // Question 3
+    { t: "Universal Containers recently transitioned from Classic to Lightning Experience. One of its business processes requires certain values from the Opportunity object to be sent via an HTTP REST callout to its external order management system when the user presses a custom button on the Opportunity detail page. Which two methods should the developer implement?", o: ["Create an after update trigger on the Opportunity object that calls a helper method using @future(callout=true) to perform the HTTP REST callout.", "Create a custom Visualforce quick action that performs the HTTP REST callout, and use a Visualforce quick action to expose the component on the Opportunity detail page.", "Create a Remote Action on the Opportunity object that executes an Apex immediate action to perform the HTTP REST callout whenever the Opportunity is updated.", "Create a Lightning component quick action that performs the HTTP REST callout, and use a Lightning Action to expose the component on the Opportunity detail page."], c: [1, 3] },
+    
+    // Question 4
+    { t: "A developer is tasked with building a custom Lightning web component to collect Contact information. The form will be shared among many different types of users in the org. There are security requirements that only certain fields should be edited and viewed by certain groups of users. What should the developer use?", o: ["ui-input-field", "force-input-field", "lightning-input-field", "aura-input-field"], c: [2] },
+    
+    // Question 5
+    { t: "Which three statements are accurate about debug logs?", o: ["Debug logs can be set for specific users, classes, and triggers.", "Only the 20 most recent debug logs for a user are kept.", "The maximum size of a debug log is 5 MB.", "Debug log levels are cumulative, where FINE log level includes all events logged at the DEBUG, INFO, WARN, and ERROR levels.", "System debug logs are retained for 24 hours."], c: [0, 3, 4] },
+    
+    // Question 6
+    { t: "A developer created a trigger on the Account object. While testing the trigger, the developer sees the error message 'Maximum trigger depth exceeded.' What could be the possible causes?", o: ["The trigger does not have sufficient code coverage.", "The trigger is getting executed multiple times.", "The developer does not have the correct user permission.", "The trigger is too long and should be refactored into a helper class."], c: [1] },
+    
+    // Question 7
+    { t: "Cloud Kicks has a multi-screen flow that its call center agents use when handling inbound service desk calls. At one of the steps in the flow, the agents should be presented with a list of order numbers and dates that are retrieved from an external order management system in real time. What should a developer use?", o: ["An invocable method", "An Apex controller", "An Apex REST class", "An outbound message"], c: [0] },
+    
+    // Question 8
+    { t: "An Opportunity needs to have an amount rolled up from a custom object that is not in a master-detail relationship. How can this be achieved?", o: ["Use the Metadata API to create real-time roll-up summaries.", "Write a trigger on the child object and use an aggregate function to sum the amount for all related child objects under the Opportunity.", "Write a trigger on the Opportunity object and use tree sorting to sum the amount for all related child objects under the Opportunity.", "Use the Streaming API to create real-time roll-up summaries."], c: [1] },
+    
+    // Question 9
+    { t: "Where are two locations a developer can look to find information about the status of batch or future methods?", o: ["Apex Flex Queue", "Developer Console", "Paused Flow Interviews component", "Apex Jobs"], c: [0, 3] },
+    
+    // Question 10
+    { t: "A developer created a new after insert trigger on the Lead object that creates Task records for each Lead. After deploying to production, an existing outside integration that inserts Lead records in batches is occasionally reporting total batch failures. Which change should the developer make?", o: ["Use the Database method with allOrNone set to false.", "Remove the Apex class from the integration users profile.", "Use a try-catch block after the insert statement.", "Deactivate the trigger before the integration runs."], c: [0] },
+    
+    // Question 11
+    { t: "A developer needs to confirm that a Contact trigger works correctly without changing the organizations data. What should the developer do to test the Contact trigger?", o: ["Use Deploy from the VSCode IDE to deploy an insert Contact Apex class.", "Use the Open Execute Anonymous feature on the Developer Console to run an insert Contact DML statement.", "Use the New button on the Salesforce Contacts Tab to create a new Contact record.", "Use the Test menu on the Developer Console to run all test classes for the Contact trigger."], c: [3] },
+    
+    // Question 12
+    { t: "Which exception type cannot be caught?", o: ["NoAccessException", "A custom exception", "CalloutException", "LimitException"], c: [3] },
+    
+    // Question 13
+    { t: "A developer is working on a project to import data from an external system into Salesforce. The data contains sensitive information that should not be visible to all users. What should the developer do?", o: ["Use a third-party tool to encrypt the sensitive data before importing it into Salesforce.", "Use the Salesforce CLI to import the data and set up user permissions to restrict access to sensitive data.", "Use the Apex Data Loader to import the data and write Apex code to handle security and access control.", "Use the Data Import Wizard to import the data and set up field-level security to restrict access to sensitive fields."], c: [3] },
+    
+    // Question 14
+    { t: "When a user edits the Postal Code on an Account, a custom Account text field named Timezone must be updated based on the values in a PostalCodeToTimezone__c custom object. Which two automation tools can be used?", o: ["Approval process", "Quick actions", "Account trigger", "Fast Field Updates record-triggered flow"], c: [2, 3] },
+    
+    // Question 15
+    { t: "Which three Salesforce resources can be accessed from a Lightning web component?", o: ["Static resources", "Third-party web components", "Content asset files", "All external libraries", "SVG resources"], c: [0, 2, 4] },
+    
+    // Question 16
+    { t: "What are three ways for a developer to execute tests in an org?", o: ["Setup Menu", "Salesforce DX", "Metadata API", "Tooling API", "Bulk API"], c: [0, 1, 3] },
+    
+    // Question 17
+    { t: "A developer created these three Rollup Summary fields in the custom object, Project__c: TotalTimesheets__c, TotalApprovedTimesheets__c, TotalRejectedTimesheets__c. The developer is asked to create a new field that shows the ratio between rejected and approved timesheets. Which should the developer use?", o: ["Roll-up summary field", "Formula field", "Record-triggered flow", "Apex trigger"], c: [1] },
+    
+    // Question 18
+    { t: "Universal Containers wants Opportunities to no longer be editable when it reaches the Closed/Won stage. Which two strategies can a developer use?", o: ["Use an automatically launched Approval Process.", "Use a before-save Apex trigger.", "Use an auto-response rule.", "Use a validation rule."], c: [1, 3] },
+    
+    // Question 19
+    { t: "A company has a custom object, Order__c, that has a required, unique external ID field called OrderNumber__c. Which statement should be used to perform the DML necessary to insert new records and update existing records using the external ID field?", o: ["merge orders", "upsert orders", "upsert orders OrderNumber__c", "merge orders OrderNumber__c"], c: [2] },
+    
+    // Question 20
+    { t: "Universal Containers has a support process that allows users to request support from its engineering team using a custom object, EngineeringSupport__c. Users should be able to associate multiple EngineeringSupport__c records to a single Opportunity record. Which relationship field should be implemented?", o: ["Lookup field from EngineeringSupport__c to Opportunity", "Master-detail field from Opportunity to EngineeringSupport__c", "Master-detail field from EngineeringSupport__c to Opportunity", "Lookup field from Opportunity to EngineeringSupport__c"], c: [2] },
+    
+    // Question 21
+    { t: "Which two settings must be defined in order to update a record of a junction object?", o: ["ReadWrite access on the primary relationship", "ReadWrite access on the junction object", "ReadWrite access on the secondary relationship", "Read access on the primary relationship"], c: [0, 2] },
+    
+    // Question 22
+    { t: "Which statement generates a list of Leads and Contacts that have a field with the phrase ACME?", o: ["Map<sObject, List<sObject>> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact, Lead", "List<List<sObject>> searchList = [SELECT Name, Id FROM Contact, Lead WHERE Name LIKE '%ACME%']", "List<sObject> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact, Lead", "List<List<sObject>> searchList = FIND 'ACME' IN ALL FIELDS RETURNING Contact, Lead"], c: [3] },
+    
+    // Question 23
+    { t: "Which three resources in an Aura component can contain JavaScript functions?", o: ["Style", "Helper", "Renderer", "Design", "Controller"], c: [1, 2, 4] },
+    
+    // Question 24
+    { t: "Which two events need to happen when deploying to a production org?", o: ["All triggers must have some test coverage.", "All Apex code must have at least 75% test coverage.", "All custom objects must have visibility set to a value other than In Development.", "All Visual flows must have at least 1% test coverage."], c: [0, 1] },
+    
+    // Question 25
+    { t: "A custom picklist field, FoodPreference__c, exists on a custom object. The picklist contains the following options: Vegan, Kosher, No Preference. The developer must ensure a value is populated every time a record is created or updated. What is the optimal way?", o: ["Mark the field as Required on the object's page layout.", "Write an Apex trigger to ensure a value is selected.", "Mark the field as Required on the field definition.", "Set 'Use the first value in the list as the default value' to True."], c: [2] },
+    
+    // Question 26
+    { t: "Which code displays the contents of a Visualforce page as a PDF?", o: ["<apex:page renderAs=\"application/pdf\">", "<apex:page contentType=\"application/pdf\">", "<apex:page contentType=\"pdf\">", "<apex:page renderAs=\"pdf\">"], c: [3] },
+    
+    // Question 27
+    { t: "What are two benefits of using declarative customizations over code?", o: ["Declarative customizations automatically generate test classes.", "Declarative customizations cannot generate run time errors.", "Declarative customizations generally require less maintenance.", "Declarative customizations automatically update with each Salesforce release."], c: [2, 3] },
+    
+    // Question 28
+    { t: "Which code statement includes an Apex method named updateAccounts in the class AccountController for use in a Lightning web component?", o: ["import updateAccounts from 'AccountController';", "import updateAccounts from 'AccountController.updateAccounts';", "import updateAccounts from '@salesforce/apex/AccountController.updateAccounts';", "import updateAccounts from '@salesforce/apex/AccountController';"], c: [2] },
+    
+    // Question 29
+    { t: "What are two use cases for executing Anonymous Apex code?", o: ["To run a batch Apex class to update all Contacts", "To delete 15,000 inactive Accounts in a single transaction after a deployment", "To schedule an Apex class to run periodically", "To add unit test code coverage to an org"], c: [2, 0] },
+    
+    // Question 30
+    { t: "In the following example, which sharing context will myMethod execute when it is invoked? public class myClass { public void myMethod() {} }", o: ["Sharing rules will be inherited from the calling context.", "Sharing rules will be enforced for the running user.", "Sharing rules will not be enforced for the running user.", "Sharing rules will be enforced by the instantiating class."], c: [0] },
+    
+    // Question 31
+    { t: "A developer is creating a Lightning web component to show a list of sales records. The Sales Representative user should be able to see the commission field. The Sales Assistant user should not see the commission field. How should this be enforced?", o: ["Use Lightning Locker Service to enforce sharing rules and field-level security.", "Use WITH SECURITY_ENFORCED in the SOQL that fetches the data for the component.", "Use Lightning Data Service to get the collection of sales records.", "Use Security.stripInaccessible to remove fields inaccessible to the current user."], c: [3] },
+    
+    // Question 32
+    { t: "A developer created a child Lightning web component nested inside a parent Lightning web component. The parent component needs to pass a string value to the child component. In which two ways can this be accomplished?", o: ["The parent component can use a public property to pass the data to the child component.", "The parent component can invoke a public method in the child component.", "The parent component can use a custom event to pass the data to the child component.", "The parent component can use the Apex controller class to send data to the child component."], c: [0, 1] },
+    
+    // Question 33
+    { t: "A developer is integrating with a legacy on-premise SQL database. What should the developer use to ensure the data being integrated is matched to the right records in Salesforce?", o: ["Formula field", "Lookup field", "External ID field", "External Object"], c: [2] },
+    
+    // Question 34
+    { t: "Which Apex class contains methods to return the amount of resources that have been used for a particular governor, such as the number of DML statements?", o: ["OrgLimits", "Messaging", "Exception", "Limits"], c: [3] },
+    
+    // Question 35
+    { t: "A developer created this Apex trigger that calls MyClass.myStaticMethod: trigger myTrigger on Contact (before insert) { MyClass.myStaticMethod(Trigger.new); }. The developer creates a test class with a test method that calls MyClass.myStaticMethod directly, resulting in 81% overall code coverage. What happens when deploying to production?", o: ["The deployment passes because both classes and the trigger were included in the deployment.", "The deployment fails because no assertions were made in the test method.", "The deployment fails because the Apex trigger has no code coverage.", "The deployment passes because the Apex code has the required 75% code coverage."], c: [2] },
+    
+    // Question 36
+    { t: "A developer is creating an app that contains multiple Lightning web components. One child component is used for navigation. When a user clicks a button called Next, the parent component must be alerted. How should this be accomplished?", o: ["Update a property on the parent.", "Call a method in the Apex controller.", "Fire a notification.", "Create a custom event."], c: [3] },
+    
+    // Question 37
+    { t: "A Developer Edition org has five existing accounts. A developer wants to add 10 more accounts for testing. How many total accounts will be in the org after this code executes? \n Account myAccount = new Account(Name='');\n insert myAccount; \n Integer x = 1;\n List<Account> newAccounts = new List<Account>(); \n do { Account acct = new Account(Name='New Account ' + x);\n newAccounts.add(acct); } \n while (x < 10);", o: ["5", "6", "10", "15"], c: [1] },
+    
+    // Question 38
+    { t: "Which action causes a before trigger to fire by default for Accounts?", o: ["Updating addresses using the Mass Address update tool", "Renaming or replacing picklists", "Importing data using the Data Loader and the Bulk API", "Converting Leads to Contacts"], c: [2] },
+    
+    // Question 39
+    { t: "Which scenario is valid for execution by unit tests?", o: ["Generate a Visualforce PDF with getContentAsPDF.", "Execute anonymous Apex as a different user.", "Load data from a remote site with a callout.", "Set the created date of a record using a system method."], c: [3] },
+    
+    // Question 40
+    { t: "Universal Containers has an order system that uses an Order Number to identify an order. Order records will be imported into Salesforce. How should the Order Number field be defined?", o: ["Lookup", "Direct Lookup", "Indirect Lookup", "External ID and Unique"], c: [3] },
+    
+    // Question 41
+    { t: "How is a controller and extension specified for a custom object named Notice on a Visualforce page?", o: ["<apex:page controllers=\"Notice__c, myControllerExtension\">", "<apex:page=Notice extends=\"myControllerExtension\">", "<apex:page standardController=\"Notice__c\" extensions=\"myControllerExtension\">", "<apex:page controller=\"Notice__c\" extensions=\"myControllerExtension\">"], c: [2] },
+    
+    // Question 42
+    { t: "A developer wants to send an outbound message when a record meets a specific criteria. Which two features satisfy this use case?", o: ["Flow Builder can be used to check the record criteria and send an outbound message.", "Entitlement Process can be used to check the record criteria and send an outbound message without Apex code.", "Approval Process can be used to check the record criteria and send an outbound message without Apex code.", "Next Best Action can be used to check the record criteria and send an outbound message."], c: [2, 0] },
+    
+    // Question 43
+    { t: "What are three capabilities of the ltng:require tag when loading JavaScript resources in Aura components?", o: ["Loading scripts in parallel", "Loading files from Documents", "One-time loading for duplicate scripts", "Loading externally hosted scripts", "Specifying loading order"], c: [0, 2, 4] },
+    
+    // Question 44
+    { t: "Flow Builder uses an Apex action to provide additional information about multiple Contacts, stored in a custom class, ContactInfo. Which is the correct definition of the Apex method?", o: ["@InvocableMethod(label='Additional Info') public static ContactInfo getInfo(Id contactId) {}", "@InvocableMethod(label='Additional Info') public List<ContactInfo> getInfo(List<Id> contactIds) {}", "@InvocableMethod(label='Additional Info') public ContactInfo getInfo(Id contactId) {}", "@InvocableMethod(label='Additional Info') public static List<ContactInfo> getInfo(List<Id> contactIds) {}"], c: [3] },
+    
+    // Question 45
+    { t: "Management asked for opportunities to be automatically created for accounts with annual revenue greater than $1,000,000. When the administrator tries to upload 179 accounts using Data Loader, it fails with System.Exception errors. Which two actions should the developer take?", o: ["Move the DML that saves opportunities outside the for loop.", "Query for existing opportunities outside the for loop.", "Check if all the required fields for Opportunity are being added on creation.", "Use Database.query to query the opportunities."], c: [0, 1] },
+    
+    // Question 46
+    { t: "Which annotation exposes an Apex class as a RESTful web service?", o: ["@RestResource(urlMapping='/myService/*')", "@AuraEnabled(cacheable=true)", "@RemoteAction", "@HttpInvocable"], c: [0] },
+    
+    // Question 47
+    { t: "Universal Containers hires a developer to build a custom search page to help users find Accounts by Name, Description, and Comments. Which consideration should the developer be aware of when deciding between SOQL and SOSL?", o: ["SOSL is able to return more records.", "SOQL is faster for text searches.", "SOQL is able to return more records.", "SOSL is faster for text searches."], c: [3] },
+    
+    // Question 48
+    { t: "A developer must create a CreditCardPayment class that provides an implementation of an existing Payment class: public virtual class Payment { public virtual void makePayment(Decimal amount) {} }. Which is the correct implementation?", o: ["public class CreditCardPayment extends Payment { public override void makePayment(Decimal amount) {} }", "public class CreditCardPayment implements Payment { public virtual void makePayment(Decimal amount) {} }", "public class CreditCardPayment implements Payment { public override void makePayment(Decimal amount) {} }"], c: [0] },
+    
+    // Question 49
+    { t: "What should be used to create scratch orgs?", o: ["Salesforce CLI", "Developer Console", "Workbench", "Sandbox refresh"], c: [0] },
+    
+    // Question 50
+    { t: "Universal Containers needs to create a custom user interface component that allows users to enter information about their accounts and validate input before saving. What is the best technology?", o: ["Visualforce", "Lightning Web Components", "Flow", "Vue.js JavaScript framework"], c: [1] },
+    
+    // Question 51
+    { t: "Which two operations affect the number of times a trigger can fire?", o: ["Roll-up summary fields", "Email messages", "Criteria-based sharing calculations", "After-save record-triggered flow"], c: [0, 3] },
+    
+    // Question 52
+    { t: "Universal Containers decides to use purely declarative development to build out a new Salesforce application. Which two options can be used to build out the business logic layer?", o: ["Remote Actions", "Batch Jobs", "Validation Rules", "Record-Triggered Flow"], c: [2, 3] },
+    
+    // Question 53
+    { t: "Refer to the following Apex code:\n Integer x = 0; \ndo { x += 7; } \nwhile (x < 1); \n  System.debug(x); \nWhat is the value of x when it is written to the debug log?", o: ["0", "1", "7", "3"], c: [0] },
+    
+    // Question 54
+    { t: "While working in a sandbox, an Apex test fails when run in the Test Runner. However, executing the Apex logic in the Execute Anonymous window succeeds. Why did the method fail in the sandbox test framework but succeed in the Developer Console?", o: ["The test method does not use System.runAs to execute as a specific user.", "The test method has a syntax error in the code.", "The test method relies on existing data in the sandbox.", "The test method is calling a @future method."], c: [2] },
+    
+    // Question 55
+    { t: "A developer has an integer variable called maxAttempts. The developer needs to ensure that once maxAttempts is initialized, it preserves its value for the length of the Apex transaction while being able to share the variable's state between trigger executions. How should the developer declare maxAttempts?", o: ["Declare maxAttempts as a private static variable on a helper class.", "Declare maxAttempts as a variable on a helper class.", "Declare maxAttempts as a member variable on the trigger definition.", "Declare maxAttempts as a constant using the static and final keywords."], c: [0] },
+    
+    // Question 56
+    { t: "If Apex code executes inside the execute method of an Apex class when implementing the Batchable interface, which two statements are true regarding governor limits?", o: ["The Apex governor limits are reset for each iteration of the execute method.", "The Apex governor limits are omitted while calling the constructor of the Apex class.", "The Apex governor limits cannot be exceeded due to the asynchronous nature of the transaction.", "The Apex governor limits will use the asynchronous limit levels."], c: [0, 3] },
+    
+    // Question 57
+    { t: "A developer needs to create a baseline set of data (Accounts, Contacts, Products, Assets) for an entire suite of Apex tests. Which approach can efficiently generate the required data for each unit test?", o: ["Use @testSetup with a void method.", "Create a mock using the HttpCalloutMock interface.", "Create test data before Test.startTest() in the unit test.", "Add @isTest(SeeAllData=true) at the start of the unit test class."], c: [0] },
+    
+    // Question 58
+    { t: "A developer needs to allow users to complete a form on an Account record that will create a record for a custom object. The form needs to display different fields depending on the user's job role and should only be available to a small group of users. Which three things should the developer do?", o: ["Create a Custom Permission for the users.", "Create a Lightning web component.", "Add a Dynamic Action to the Users assigned Page Layouts.", "Create a Dynamic Form.", "Add a Dynamic Action to the Account Record Page."], c: [0, 1, 4] },
+    
+    // Question 59
+    { t: "A developer created a trigger on the Account object and wants to test if the trigger is properly bulkified. The developer team decided that the trigger should be tested with 200 account records with unique names. What two things should be done to create the test data with the least amount of code?", o: ["Use the @isTest(isParallel=true) annotation in the test class.", "Use the @isTest(SeeAllData=true) annotation in the test class.", "Create a static resource containing test data.", "Use Test.loadData to populate data in your test methods."], c: [2, 3] },
+    
+    // Question 60
+    { t: "A team of many developers work in their own individual orgs that have the same configuration as the production org. Which type of org is best suited for this scenario?", o: ["Developer Sandbox", "Partner Developer Edition", "Developer Edition", "Full Sandbox"], c: [0] }
+];
+
+
+        // --- 2. GLOBAL STATE ---
+        let currentSetIndex = 1; 
+        let currentQuestionIndex = 0;
+        let generatedSets = {}; 
+        let userProgress = {
+            1: { answers: {}, status: 'pending', score: null },
+            2: { answers: {}, status: 'pending', score: null },
+            3: { answers: {}, status: 'pending', score: null }
+        };
+        let timerInterval;
+        let timeRemaining = 7200; // 120 mins
+
+        // --- 3. CORE FUNCTIONS ---
+
+        function startApp() {
+            const name = document.getElementById('usernameInput').value;
+            if(!name.trim()) return alert("Please enter your name.");
+            
+            document.getElementById('displayUsername').textContent = name;
+            document.getElementById('certName').textContent = name;
+            document.getElementById('startModal').style.display = 'none';
+
+            // Generate Sets
+            generateSets();
+            
+            // Load Set 1
+            loadSet(1);
+        }
+
+        function generateSets() {
+            // Replicate pool to ensure we have enough for 3 sets of 80 (240 total)
+            let fullPool = [...rawMasterPool];
+            while(fullPool.length < 240) {
+                fullPool = fullPool.concat(rawMasterPool);
+            }
+            
+            // Fisher-Yates Shuffle
+            const shuffle = (arr) => {
+                for (let i = arr.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [arr[i], arr[j]] = [arr[j], arr[i]];
+                }
+                return arr;
+            };
+            
+            fullPool = shuffle(fullPool);
+
+            // Assign unique IDs to track them within the session
+            fullPool = fullPool.map((q, i) => ({...q, id: i}));
+
+            generatedSets[1] = fullPool.slice(0, 80);
+            generatedSets[2] = fullPool.slice(80, 160);
+            generatedSets[3] = fullPool.slice(160, 240);
+        }
+
+        function loadSet(setNum) {
+            currentSetIndex = setNum;
+            currentQuestionIndex = 0;
+            
+            // UI Toggle
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById(`nav-set${setNum}`).classList.add('active');
+            
+            document.getElementById('quizContainer').style.display = 'block';
+            document.getElementById('certContainer').style.display = 'none';
+            document.getElementById('pageTitle').textContent = `Practice Set ${setNum}`;
+            
+            // Setup Bottom Panel
+            renderBottomNav();
+
+            // Load First Question
+            renderQuestion();
+
+            // Start Timer
+            if(userProgress[setNum].status === 'pending') {
+                resetTimer();
+            } else {
+                document.getElementById('timerDisplay').textContent = "Completed";
+            }
+        }
+
+        function renderQuestion() {
+            const qData = generatedSets[currentSetIndex][currentQuestionIndex];
+            const isMulti = qData.c.length > 1;
+            const progress = userProgress[currentSetIndex];
+            const isReview = progress.status === 'completed';
+
+            // Meta
+            document.getElementById('qIndexBadge').textContent = `Question ${currentQuestionIndex + 1} of 80`;
+            document.getElementById('qTypeBadge').textContent = isMulti ? `Multiple Choice (Select ${qData.c.length})` : 'Single Choice';
+            document.getElementById('qText').textContent = qData.t;
+
+            // Clear Feedback
+            document.getElementById('resultMessage').style.display = 'none';
+
+            // Options
+            const container = document.getElementById('optionsContainer');
+            container.innerHTML = '';
+
+            // Get saved state
+            const answerState = progress.answers[qData.id] || { selected: [], evaluated: false };
+            const userSelection = answerState.selected;
+            const isEvaluated = answerState.evaluated;
+
+            qData.o.forEach((optText, idx) => {
+                const row = document.createElement('div');
+                row.className = 'option-row';
+                
+                const isSelected = userSelection.includes(idx);
+                const isCorrect = qData.c.includes(idx);
+
+                // --- STATE LOGIC ---
+                // If Review Mode OR Evaluated: Show Right/Wrong visuals
+                if (isReview || isEvaluated) {
+                    if (isCorrect) {
+                        row.classList.add('feedback-correct');
+                    } else if (isSelected) {
+                        row.classList.add('feedback-wrong');
+                    } else {
+                        row.classList.add('disabled');
+                    }
+                } else {
+                    // Active Mode
+                    if (isSelected) row.classList.add('selected');
+                    row.onclick = () => toggleOption(idx, isMulti);
+                }
+
+                // Input
+                const input = document.createElement('input');
+                input.type = isMulti ? 'checkbox' : 'radio';
+                input.className = 'option-input';
+                input.checked = isSelected;
+                input.disabled = isReview || isEvaluated;
+                
+                const text = document.createElement('span');
+                text.textContent = optText;
+
+                row.appendChild(input);
+                row.appendChild(text);
+                container.appendChild(row);
+            });
+
+            // Buttons Logic
+            const evalBtn = document.getElementById('evaluateBtn');
+            const submitBtn = document.getElementById('submitBtn'); 
+            
+            if (isReview) {
+                // Set Finished
+                evalBtn.style.display = 'none';
+                submitBtn.style.display = 'none'; 
+            } else {
+                // Set In Progress
+                if (isEvaluated) {
+                    evalBtn.style.display = 'none'; // Already checked
+                    // Show immediate feedback text
+                    showFeedbackText(userSelection, qData.c);
+                } else {
+                    evalBtn.style.display = 'block';
+                }
+                submitBtn.style.display = 'block';
+            }
+
+            // Navigation Buttons
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').disabled = currentQuestionIndex === 79;
+
+            // Highlight current in bottom nav
+            updateBottomNavHighlight();
+        }
+
+        function toggleOption(optIdx, isMulti) {
+            const qId = generatedSets[currentSetIndex][currentQuestionIndex].id;
+            let currentData = userProgress[currentSetIndex].answers[qId] || { selected: [], evaluated: false };
+            let currentSel = currentData.selected;
+
+            if (isMulti) {
+                if (currentSel.includes(optIdx)) currentSel = currentSel.filter(i => i !== optIdx);
+                else currentSel.push(optIdx);
+            } else {
+                currentSel = [optIdx];
+            }
+
+            userProgress[currentSetIndex].answers[qId] = { selected: currentSel, evaluated: false };
+            renderQuestion(); // Re-render for selection style
+            renderBottomNav(); // Update nav (blue for answered)
+        }
+
+        function evaluateQuestion() {
+            const qId = generatedSets[currentSetIndex][currentQuestionIndex].id;
+            const currentData = userProgress[currentSetIndex].answers[qId];
+
+            if (!currentData || !currentData.selected || currentData.selected.length === 0) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            // Mark as evaluated
+            userProgress[currentSetIndex].answers[qId].evaluated = true;
+            
+            // Re-render to lock inputs and show colors
+            renderQuestion(); 
+            // Update bottom nav (now green/red)
+            renderBottomNav(); 
+        }
+
+        function showFeedbackText(userSelected, correctIndices) {
+            const msgBox = document.getElementById('resultMessage');
+            const title = document.getElementById('resultTitle');
+            const desc = document.getElementById('resultDesc');
+            const correctText = document.getElementById('correctAnswerDisplay');
+
+            const sortedUser = [...userSelected].sort().toString();
+            const sortedCorrect = [...correctIndices].sort().toString();
+            
+            msgBox.style.display = 'block';
+            if (sortedUser === sortedCorrect) {
+                msgBox.className = 'result-message-area success';
+                title.textContent = "Correct!";
+                desc.textContent = "Great job.";
+                correctText.style.display = 'none';
+            } else {
+                msgBox.className = 'result-message-area error';
+                title.textContent = "Incorrect.";
+                desc.textContent = "The correct answer is highlighted above.";
+                correctText.style.display = 'block';
+                
+                const qData = generatedSets[currentSetIndex][currentQuestionIndex];
+                const correctStrings = correctIndices.map(i => qData.o[i]).join('; ');
+                correctText.innerHTML = `<strong>Correct Answer:</strong> ${correctStrings}`;
+            }
+        }
+
+        function navigate(dir) {
+            if (currentQuestionIndex + dir >= 0 && currentQuestionIndex + dir < 80) {
+                currentQuestionIndex += dir;
+                renderQuestion();
+            }
+        }
+
+        // --- 4. BOTTOM NAV & LOGIC ---
+
+        function renderBottomNav() {
+            const container = document.getElementById('navGrid');
+            container.innerHTML = '';
+            
+            const setQs = generatedSets[currentSetIndex];
+            const progress = userProgress[currentSetIndex];
+            const isSetCompleted = progress.status === 'completed';
+
+            setQs.forEach((q, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'nav-btn-q';
+                btn.textContent = idx + 1;
+                
+                const qId = q.id;
+                const answerData = progress.answers[qId];
+                
+                // Has Selected?
+                const hasSelection = answerData && answerData.selected && answerData.selected.length > 0;
+                // Is Evaluated? (Clicked Evaluate button)
+                const isEvaluated = answerData && answerData.evaluated;
+
+                if (isSetCompleted || isEvaluated) {
+                    // Logic: Green if correct, Red if wrong
+                    if (hasSelection) {
+                        const userAns = (answerData.selected).sort().toString();
+                        const correctAns = [...q.c].sort().toString();
+                        if (userAns === correctAns) btn.classList.add('correct');
+                        else btn.classList.add('incorrect');
+                    } else {
+                        btn.classList.add('incorrect'); // Unanswered in review
+                    }
+                } else {
+                    // Logic: Blue if answered but not evaluated
+                    if (hasSelection) btn.classList.add('answered');
+                }
+
+                if(idx === currentQuestionIndex) btn.classList.add('current');
+
+                btn.onclick = () => {
+                    currentQuestionIndex = idx;
+                    renderQuestion();
+                };
+
+                container.appendChild(btn);
+            });
+        }
+
+        function updateBottomNavHighlight() {
+            renderBottomNav(); 
+        }
+
+        let isPanelOpen = true;
+        function toggleBottomPanel() {
+            const panel = document.getElementById('bottomPanel');
+            const icon = document.getElementById('panelIcon');
+            const main = document.getElementById('mainArea');
+            
+            if(isPanelOpen) {
+                panel.style.height = '30px'; 
+                main.style.paddingBottom = '40px';
+                icon.textContent = '▲';
+            } else {
+                panel.style.height = '80px';
+                main.style.paddingBottom = '120px';
+                icon.textContent = '▼';
+            }
+            isPanelOpen = !isPanelOpen;
+        }
+
+        // --- 5. SUBMISSION & CERTIFICATE ---
+
+        function submitSet() {
+            if(!confirm("Finish this set? You cannot change answers afterwards.")) return;
+            
+            const progress = userProgress[currentSetIndex];
+            const setQs = generatedSets[currentSetIndex];
+            let correctCount = 0;
+
+            setQs.forEach(q => {
+                const ansData = progress.answers[q.id];
+                const userAns = (ansData?.selected || []).sort().toString();
+                const correctAns = [...q.c].sort().toString();
+                if(userAns === correctAns) correctCount++;
+            });
+
+            progress.score = Math.round((correctCount / 80) * 100);
+            progress.status = 'completed';
+
+            const statEl = document.getElementById(`status-set${currentSetIndex}`);
+            statEl.textContent = `${progress.score}%`;
+            statEl.classList.add('done');
+
+            clearInterval(timerInterval);
+            document.getElementById('timerDisplay').textContent = "Finished";
+            
+            alert(`Set ${currentSetIndex} Completed.\nScore: ${progress.score}%`);
+            renderQuestion(); 
+        }
+
+        function showCertificate() {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-cert').classList.add('active');
+            
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('certContainer').style.display = 'flex';
+            document.getElementById('bottomPanel').style.display = 'none';
+            document.getElementById('pageTitle').textContent = "Certification";
+
+            updateCertificateData();
+        }
+
+        function updateCertificateData() {
+            const date = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('certDate').textContent = `Date: ${date}`;
+
+            let allPassed = true;
+
+            // Populate scores
+            for(let i=1; i<=3; i++) {
+                const p = userProgress[i];
+                const scoreEl = document.getElementById(`cert-score-${i}`);
+                const statEl = document.getElementById(`cert-stat-${i}`);
+
+                if(p.status === 'completed') {
+                    scoreEl.textContent = `${p.score}%`;
+                    if(p.score >= 65) {
+                        statEl.textContent = "PASS";
+                        statEl.className = "sb-stat pass";
+                    } else {
+                        statEl.textContent = "FAIL";
+                        statEl.className = "sb-stat fail";
+                        allPassed = false;
+                    }
+                } else {
+                    scoreEl.textContent = "--";
+                    statEl.textContent = "Incomplete";
+                    statEl.className = "sb-stat";
+                    allPassed = false;
+                }
+            }
+
+            // Trigger Confetti if All Passed
+            if (allPassed) {
+                triggerConfetti();
+            }
+        }
+
+        // --- 6. TIMER ---
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timeRemaining = 7200;
+            updateTimerUI();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerUI();
+                if(timeRemaining <= 0) {
+                    submitSet();
+                }
+            }, 1000);
+        }
+
+        function updateTimerUI() {
+            const m = Math.floor(timeRemaining / 60);
+            const s = timeRemaining % 60;
+            document.getElementById('timerDisplay').textContent = `${m}:${s < 10 ? '0' : ''}${s}`;
+        }
+
+        // --- 7. CONFETTI EFFECT ---
+        function triggerConfetti() {
+            const canvas = document.getElementById('confettiCanvas');
+            canvas.style.display = 'block';
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const particles = [];
+            const particleCount = 150;
+
+            for(let i=0; i<particleCount; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    color: ['#0176D3', '#00A1E0', '#027e46', '#FFB75D'][Math.floor(Math.random()*4)],
+                    size: Math.random() * 10 + 5,
+                    speed: Math.random() * 5 + 2,
+                    angle: Math.random() * 360
+                });
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => {
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                    p.y += p.speed;
+                    p.angle += 2;
+                    if(p.y > canvas.height) p.y = -20;
+                });
+                requestAnimationFrame(draw);
+            }
+            draw();
+
+            setTimeout(() => {
+                canvas.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
