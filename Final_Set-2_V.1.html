@@ -1466,19 +1466,25 @@ const rawMasterPool = [
         // --- 3. CORE FUNCTIONS ---
 
         function startApp() {
-            const name = document.getElementById('usernameInput').value;
-            if(!name.trim()) return alert("Please enter your name.");
-            
-            document.getElementById('displayUsername').textContent = name;
-            document.getElementById('certName').textContent = name;
-            document.getElementById('startModal').style.display = 'none';
 
-            // Generate Sets
-            generateSets();
-            
-            // Load Set 1
-            loadSet(1);
-        }
+    // 🔐 1. CAPTURE NAME + EMAIL (NEW – MUST BE FIRST)
+    if (!captureUserInfo()) return;
+
+    // 👤 2. EXISTING UI LOGIC (PRESERVED)
+    document.getElementById('displayUsername').textContent = USER_NAME;
+    document.getElementById('certName').textContent = USER_NAME;
+    document.getElementById('startModal').style.display = 'none';
+
+    // 🧪 3. GENERATE QUESTION SETS (UNCHANGED)
+    generateSets();
+
+    // 📘 4. LOAD SET 1 (UNCHANGED)
+    loadSet(1);
+
+    // ⏱️ 5. START PERFORMANCE TRACKER (NEW – MUST BE LAST)
+    initTracker("Set 2");
+}
+
 
         function generateSets() {
             // Replicate pool to ensure we have enough for 3 sets of 80 (240 total)
