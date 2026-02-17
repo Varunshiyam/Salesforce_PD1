@@ -478,9 +478,9 @@
                 </ul>
             </div>
 
-            <input type="text" id="usernameInput" class="input-field" placeholder="Enter Your Name">
-            <input type="text" id="usernameInput" placeholder="Full Name">
-            <input type="email" id="emailInput" placeholder="Email Address" required>
+            <input type="text" id="usernameInput" class="input-field" placeholder="Enter Your Full Name">
+            <input type="email" id="emailInput" class="input-field" placeholder="Email Address" required>
+
             <button class="btn" style="width:100%;" onclick="startApp()">Start Assessment</button>
         </div>
     </div>
@@ -875,23 +875,26 @@ const rawMasterPool = [
 
 function startApp() {
 
-    // 🔐 1. CAPTURE NAME + EMAIL (NEW – MUST BE FIRST)
+    // 1️⃣ Capture Name + Email (tracker.js)
     if (!captureUserInfo()) return;
 
-    // 👤 2. EXISTING UI LOGIC (PRESERVED)
+    // 2️⃣ Display user info
     document.getElementById('displayUsername').textContent = USER_NAME;
     document.getElementById('certName').textContent = USER_NAME;
+
+    // 3️⃣ Close modal
     document.getElementById('startModal').style.display = 'none';
 
-    // 🧪 3. GENERATE QUESTION SETS (UNCHANGED)
+    // 4️⃣ Generate question sets
     generateSets();
 
-    // 📘 4. LOAD SET 1 (UNCHANGED)
+    // 5️⃣ Load first set
     loadSet(1);
 
-    // ⏱️ 5. START PERFORMANCE TRACKER (NEW – MUST BE LAST)
-    initTracker("Set 1");
+    // 6️⃣ Start tracker (IMPORTANT)
+    initTracker("Set 1"); // change to "Set 2" in version-2 if needed
 }
+
 
 
         function generateSets() {
@@ -1204,7 +1207,9 @@ function startApp() {
             alert(`Set ${currentSetIndex} Completed.\nScore: ${progress.score}%`);
             renderQuestion(); 
 
+
             sendResultsToGoogleSheet();
+
 
         }
 
@@ -1317,5 +1322,6 @@ function startApp() {
         }
 
     </script>
+    <script src="tracker.js"></script>
 </body>
 </html>
