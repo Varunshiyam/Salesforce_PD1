@@ -609,7 +609,8 @@
         // 240 questions Logic. Populated with representative samples. 
         // In a full implementation, you would paste the text for all 240 questions here.
         // For this demo, I will use the ~80 unique items provided and replicate to ensure the app functions with 240 slots.
-        
+        let CURRENT_SET_INDEX = 1;
+
 const rawMasterPool = [
         // --- SET 1 (60 Questions) ---
         { t: "A developer created a trigger on the Account object and wants to test if the trigger is properly bulkified. The developer team decided that the trigger should be tested with 200 account records with unique names.\n\nWhat two things should be done to create the test data within the unit test with the least amount of code?", o: ["Use the @isTest(isParallel=true) annotation in the test class.", "Create a static resource containing test data.", "Use Test.loadData to populate data in your test methods.", "Use the @isTest(seeAllData=true) annotation in the test class."], c: [1, 2] },
@@ -875,25 +876,18 @@ const rawMasterPool = [
 
 function startApp() {
 
-    // 1️⃣ Capture Name + Email (tracker.js)
     if (!captureUserInfo()) return;
 
-    // 2️⃣ Display user info
-    document.getElementById('displayUsername').textContent = USER_NAME;
-    document.getElementById('certName').textContent = USER_NAME;
+    document.getElementById("displayUsername").textContent = USER_NAME;
+    document.getElementById("certName").textContent = USER_NAME;
+    document.getElementById("startModal").style.display = "none";
 
-    // 3️⃣ Close modal
-    document.getElementById('startModal').style.display = 'none';
-
-    // 4️⃣ Generate question sets
     generateSets();
-
-    // 5️⃣ Load first set
     loadSet(1);
 
-    // 6️⃣ Start tracker (IMPORTANT)
-    initTracker("Set 1"); // change to "Set 2" in version-2 if needed
+    initTracker("Practice Set 1");
 }
+
 
 
 
@@ -924,7 +918,8 @@ function startApp() {
         }
 
         function loadSet(setNum) {
-            currentSetIndex = setNum;
+            CURRENT_SET_INDEX = setNumber;
+
             currentQuestionIndex = 0;
             
             // UI Toggle
@@ -1208,7 +1203,18 @@ function startApp() {
             renderQuestion(); 
 
 
-            sendResultsToGoogleSheet();
+
+    const result = calculateSetResultForTracker();
+
+    sendResultsToGoogleSheet({
+        name: USER_NAME,
+        email: USER_EMAIL,
+        testSet: `Practice Set ${CURRENT_SET_INDEX}`,
+        totalQuestions: result.totalQuestions,
+        correct: result.correct,
+        wrong: result.wrong,
+        score: result.score,
+        timeTaken: getTimeTaken()
 
 
         }
@@ -1320,6 +1326,28 @@ function startApp() {
                 canvas.style.display = 'none';
             }, 5000);
         }
+    function calculateSetResultForTracker() {
+    const setQuestions = sets[CURRENT_SET_INDEX];
+    let correct = 0;
+    let wrong = 0;
+
+    setQuestions.forEach(q => {
+        if (!q.selected || q.selected.length === 0) return;
+
+        const correctAns = q.c.slice().sort().join(",");
+        const userAns = q.selected.slice().sort().join(",");
+
+        if (correctAns === userAns) correct++;
+        else wrong++;
+    });
+
+    return {
+        totalQuestions: setQuestions.length,
+        correct,
+        wrong,
+        score: Math.round((correct / setQuestions.length) * 100) + "%"
+    };
+}
 
     </script>
     <script src="tracker.js"></script>
