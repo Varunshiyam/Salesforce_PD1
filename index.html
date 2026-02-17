@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salesforce Platform Developer I - Practice Hub</title>
+    <style>
+        /* ===== Salesforce Design Tokens ===== */
+        :root {
+            --sf-blue: #0176d3;
+            --sf-blue-dark: #014486;
+            --sf-teal: #00a1e0;
+            --sf-cloud: #f3f3f2;
+            --sf-text-main: #080707;
+            --sf-text-sub: #444444;
+            --card-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Salesforce Sans', 'Segoe UI', Roboto, sans-serif;
+            background: var(--sf-cloud);
+            color: var(--sf-text-main);
+            line-height: 1.5;
+        }
+
+        /* ===== Reworked Hero Section ===== */
+        .hero {
+            position: relative;
+            width: 100%;
+            height: 480px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            border-bottom: 6px solid var(--sf-teal);
+            
+            /* Background Image Setup */
+            /* Updated to use your GitHub Raw Image Link */
+            background: 
+                linear-gradient(90deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.1) 100%),
+                url('https://raw.githubusercontent.com/Varunshiyam/Salesforce_PD1/main/sales-trailhead-background_4be18b%20copy.webp') no-repeat center center;
+            background-size: cover;
+        }
+
+        /* Glassmorphic Container inside Hero */
+        .hero-inner {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .hero-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 550px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content h1 {
+            color: var(--sf-blue);
+            font-size: 2.4rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+            line-height: 1.1;
+        }
+
+        .hero-content p {
+            color: var(--sf-text-sub);
+            font-size: 1.1rem;
+            font-weight: 400;
+            margin-bottom: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--sf-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        /* ===== Main Content Area ===== */
+        .container {
+            max-width: 1100px;
+            margin: -60px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* ===== Cards Styling ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 35px;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid #dddbda;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: var(--sf-blue);
+            box-shadow: 0 25px 50px rgba(27, 82, 151, 0.15);
+        }
+
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--sf-blue);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            color: var(--sf-blue);
+        }
+
+        .card p {
+            font-size: 1rem;
+            color: var(--sf-text-sub);
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        /* ===== Action Button ===== */
+        .btn {
+            background-color: var(--sf-blue);
+            color: white;
+            padding: 14px 24px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            text-align: center;
+            transition: background 0.2s;
+            border: none;
+        }
+
+        .card:hover .btn {
+            background-color: var(--sf-blue-dark);
+        }
+
+        /* ===== Footer ===== */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--sf-text-sub);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive Tweaks */
+        @media (max-width: 768px) {
+            .hero { height: 350px; }
+            .hero-content { margin: 0 20px; padding: 25px; }
+            .hero-content h1 { font-size: 1.8rem; }
+            .container { margin-top: -30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reworked Hero with New GitHub Banner -->
+    <header class="hero">
+        <div class="hero-inner">
+            <div class="hero-content">
+                <span class="badge">Certification Prep</span>
+                <h1>Salesforce Platform Developer I</h1>
+                <p>Sharpen your skills with curated exam sets designed to mirror the real PD-1 experience.</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="cards">
+            
+            <a href="Final_Set_1_V1.html" class="card">
+                <div class="card-icon">🧠</div>
+                <h2>Practice Test — Set 1</h2>
+                <p>Focus on Core Apex Fundamentals, SOQL, SOSL, and the multi-tenant architecture governor limits.</p>
+                <span class="btn">Begin Set 1</span>
+            </a>
+
+            <a href="Final_Set-2_V.1.html" class="card">
+                <div class="card-icon">⚡</div>
+                <h2>Practice Test — Set 2</h2>
+                <p>Advanced scenarios involving Triggers, Lightning Web Components, and Integration patterns.</p>
+                <span class="btn">Begin Set 2</span>
+            </a>
+
+        </div>
+
+        <footer class="footer">
+            Built for serious trailhead explorers. Salesforce, SLDS, and Lightning are trademarks of Salesforce, Inc.
+        </footer>
+    </div>
+
+</body>
+</html>
